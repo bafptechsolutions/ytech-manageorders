@@ -1,0 +1,55 @@
+name: ytech
+services:
+  ytech-postgres:
+    container_name: "ytech_postgres"
+    image: postgres:16.4-alpine
+    restart: always
+    hostname: "postgres.ytech.localhost.local"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - 8702:5432
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./tlscerts:/var/lib/postgresql/certs
+      
+    extra_hosts:
+      - "manageOrders.ytech.localhost.local:host-gateway"      
+    networks:
+      ytech_projects_network:
+        aliases:
+          - postgres.ytech.localhost.local
+
+  ytech-pgadmin:    
+    container_name: "ytech_pgadmin"
+    image: dpage/pgadmin4:8.10
+    hostname: "pgadmin.ytech.localhost.local"
+    restart: always
+    depends_on:
+      - ytech-postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_ENABLE_TLS: 1
+      PGADMIN_LISTEN_PORT: 443
+    ports:
+      - 8703:443
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+      - ./tlscerts:/certs
+    networks:
+      ytech_projects_network:
+        aliases:
+          - pgadmin.ytech.localhost.local
+
+networks:
+  ytech_projects_network:
+    name: ytech_projects_network
+    external: true 
