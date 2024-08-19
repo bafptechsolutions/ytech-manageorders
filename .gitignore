@@ -24,4 +24,6 @@ hs_err_pid*
 replay_pid*
 
 # respeitante às bases de dados
-/data/
+data/**
+data/
+data
