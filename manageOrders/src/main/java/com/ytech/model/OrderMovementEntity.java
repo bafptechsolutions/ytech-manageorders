@@ -1,6 +1,10 @@
 package com.ytech.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * @author Bruno Pinto
@@ -8,7 +12,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "orderMovements")
-public class OrderMovementEntity {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class OrderMovementEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
