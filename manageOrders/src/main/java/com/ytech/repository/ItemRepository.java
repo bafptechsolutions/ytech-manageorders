@@ -11,7 +11,19 @@ import java.util.List;
  */
 public class ItemRepository {
 
-  public List<ItemEntity> getAll(Session session) {
+  public List<ItemEntity> findAll(Session session) {
     return session.createQuery("FROM ItemEntity", ItemEntity.class).getResultList();
+  }
+
+  public ItemEntity findById(Session session, Long id) {
+    return session.get(ItemEntity.class, id);
+  }
+
+  public void save(Session session, ItemEntity item) {
+    session.saveOrUpdate(item);
+  }
+
+  public void delete(Session session, ItemEntity item) {
+    session.delete(item);
   }
 }

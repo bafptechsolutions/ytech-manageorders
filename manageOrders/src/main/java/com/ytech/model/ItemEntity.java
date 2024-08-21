@@ -1,8 +1,10 @@
 package com.ytech.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @author Bruno Pinto
@@ -10,6 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "items")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemEntity implements Serializable {
 
   @Id
@@ -19,11 +23,11 @@ public class ItemEntity implements Serializable {
   @Column(nullable = false, length = 100)
   private String name;
 
-  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<StockMovementEntity> stockMovementEntities;
+//  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private Set<StockMovementEntity> stockMovementEntities;
 
-  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<OrderEntity> orderEntities;
+//  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private Set<OrderEntity> orderEntities;
 
   public Long getId() {
     return id;
@@ -41,19 +45,19 @@ public class ItemEntity implements Serializable {
     this.name = name;
   }
 
-  public Set<StockMovementEntity> getStockMovementEntities() {
-    return stockMovementEntities;
-  }
-
-  public void setStockMovementEntities(Set<StockMovementEntity> stockMovementEntities) {
-    this.stockMovementEntities = stockMovementEntities;
-  }
-
-  public Set<OrderEntity> getOrderEntities() {
-    return orderEntities;
-  }
-
-  public void setOrderEntities(Set<OrderEntity> orderEntities) {
-    this.orderEntities = orderEntities;
-  }
+//  public Set<StockMovementEntity> getStockMovementEntities() {
+//    return stockMovementEntities;
+//  }
+//
+//  public void setStockMovementEntities(Set<StockMovementEntity> stockMovementEntities) {
+//    this.stockMovementEntities = stockMovementEntities;
+//  }
+//
+//  public Set<OrderEntity> getOrderEntities() {
+//    return orderEntities;
+//  }
+//
+//  public void setOrderEntities(Set<OrderEntity> orderEntities) {
+//    this.orderEntities = orderEntities;
+//  }
 }

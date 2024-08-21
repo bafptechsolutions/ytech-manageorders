@@ -7,16 +7,16 @@ import javax.ws.rs.core.Response;
  * @since 20/08/2024
  */
 public class ServiceResponse<T> {
-  private T data;
-  private Response.Status status;
+  private final T body;
+  private final Response.Status status;
 
-  public ServiceResponse(T data, Response.Status status) {
-      this.data = data;
+  public ServiceResponse(T body, Response.Status status) {
+      this.body = body;
       this.status = status;
   }
 
-  public T getData() {
-    return data;
+  public T getBody() {
+    return body;
   }
 
   public Response.Status getStatus() {
