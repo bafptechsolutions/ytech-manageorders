@@ -1,5 +1,6 @@
 package com.ytech.config;
 
+import com.ytech.exception.ConstraintViolationExceptionMapper;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -18,6 +19,7 @@ public class JettyServerConfig {
     ResourceConfig config = new ResourceConfig();
     config.register(new AppBinder());
     config.packages("com.ytech.controller");
+    config.register(ConstraintViolationExceptionMapper.class);
     ServletContainer servletContainer = new ServletContainer(config);
     ServletHolder servletHolder = new ServletHolder(servletContainer);
     context.addServlet(servletHolder, "/*");

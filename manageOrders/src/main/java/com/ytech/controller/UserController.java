@@ -6,6 +6,7 @@ import com.ytech.service.UserService;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -52,7 +53,7 @@ public class UserController {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createUser(UserEntity user) {
+  public Response createUser(@Valid UserEntity user) {
     ServiceResponse<UserEntity> response = userService.create(user);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
