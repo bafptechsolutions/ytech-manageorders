@@ -1,8 +1,11 @@
 package com.ytech.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
  * @author Bruno Pinto
@@ -10,7 +13,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "orders")
-public class OrderEntity {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class OrderEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +38,8 @@ public class OrderEntity {
   @Column(length = 20, nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'Pending'")
   private String status;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<OrderMovementEntity> orderMovements;
+//  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private Set<OrderMovementEntity> orderMovements;
 
   public Long getId() {
     return id;
@@ -84,11 +89,11 @@ public class OrderEntity {
     this.status = status;
   }
 
-  public Set<OrderMovementEntity> getOrderMovements() {
-    return orderMovements;
-  }
+//  public Set<OrderMovementEntity> getOrderMovements() {
+//    return orderMovements;
+//  }
 
-  public void setOrderMovements(Set<OrderMovementEntity> orderMovements) {
-    this.orderMovements = orderMovements;
-  }
+//  public void setOrderMovements(Set<OrderMovementEntity> orderMovements) {
+//    this.orderMovements = orderMovements;
+//  }
 }

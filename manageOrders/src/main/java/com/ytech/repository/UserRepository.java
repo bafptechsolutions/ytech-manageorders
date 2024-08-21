@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * @author Bruno Pinto
  * @since 21/08/2024
- */public class UserRepository {
+ */
+public class UserRepository {
 
   public List<UserEntity> findAll(Session session) {
     return session.createQuery("FROM UserEntity", UserEntity.class).getResultList();
