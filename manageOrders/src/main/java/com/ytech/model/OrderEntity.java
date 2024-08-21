@@ -28,7 +28,7 @@ public class OrderEntity {
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  private UserEntity userEntity;
 
   @Column(length = 20, nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'Pending'")
   private String status;
@@ -68,12 +68,12 @@ public class OrderEntity {
     this.quantity = quantity;
   }
 
-  public User getUser() {
-    return user;
+  public UserEntity getUser() {
+    return userEntity;
   }
 
-  public void setUser(User user) {
-    this.user = user;
+  public void setUser(UserEntity userEntity) {
+    this.userEntity = userEntity;
   }
 
   public String getStatus() {
