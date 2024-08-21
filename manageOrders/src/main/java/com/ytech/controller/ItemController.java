@@ -6,6 +6,7 @@ import com.ytech.service.ServiceResponse;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,7 +45,7 @@ public class ItemController {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createItem(ItemEntity item) {
+  public Response createItem(@Valid ItemEntity item) {
     ServiceResponse<ItemEntity> response = itemService.create(item);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
@@ -53,7 +54,7 @@ public class ItemController {
   @Path("/{id}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response updateItem(@PathParam("id") Long id, ItemEntity item) {
+  public Response updateItem(@PathParam("id") Long id, @Valid ItemEntity item) {
     ServiceResponse<ItemEntity> response = itemService.update(id, item);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }

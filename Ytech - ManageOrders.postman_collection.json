@@ -55,6 +55,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"tapete\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{YtechManageOrders}}/items",
 							"host": [
@@ -72,13 +81,29 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"tapete\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{YtechManageOrders}}/items",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
 								"{{YtechManageOrders}}"
 							],
 							"path": [
-								"items"
+								"items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
 							]
 						}
 					},
