@@ -1,11 +1,12 @@
 package com.ytech.controller;
 
 import com.ytech.model.OrderEntity;
-import com.ytech.service.ServiceResponse;
 import com.ytech.service.OrderService;
+import com.ytech.service.ServiceResponse;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,24 +45,16 @@ public class OrderController {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createOrder(OrderEntity order) {
+  public Response createOrder(@Valid OrderEntity order) {
     ServiceResponse<OrderEntity> response = orderService.create(order);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
-  @PUT
-  @Path("/{id}")
+  @DELETE
+  @Path("/{id}/cancel")
   @Produces(MediaType.APPLICATION_JSON)
   public Response cancelOrder(@PathParam("id") Long id) {
     ServiceResponse<OrderEntity> response = orderService.updateStatus(id, "cancelled");
     return Response.status(response.getStatus()).entity(response.getBody()).build();
-  }
-
-  @DELETE
-  @Path("/{id}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response deleteOrder(@PathParam("id") Long id) {
-    ServiceResponse<Void> response = orderService.delete(id);
-    return Response.status(response.getStatus()).build();
   }
 }
