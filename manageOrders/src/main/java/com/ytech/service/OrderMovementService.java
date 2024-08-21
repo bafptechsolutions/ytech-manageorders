@@ -22,6 +22,7 @@ public class OrderMovementService {
   private final OrderMovementRepository orderMovementRepository;
   private final SessionFactory sessionFactory;
 
+
   public OrderMovementService(OrderMovementRepository orderMovementRepository, SessionFactory sessionFactory) {
     this.orderMovementRepository = orderMovementRepository;
     this.sessionFactory = sessionFactory;
@@ -71,5 +72,6 @@ public class OrderMovementService {
     System.out.println(stockMovement.getId());
     System.out.println(stockMovement.getItemId());
     System.out.println(stockMovement.getQuantity());
+    // enviar email quando item for satisfeito
   }
 }

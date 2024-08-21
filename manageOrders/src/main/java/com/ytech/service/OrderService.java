@@ -2,6 +2,7 @@ package com.ytech.service;
 
 import com.ytech.model.ItemEntity;
 import com.ytech.model.OrderEntity;
+import com.ytech.model.UserEntity;
 import com.ytech.repository.OrderRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author Bruno Pinto
@@ -25,13 +27,15 @@ public class OrderService {
   private final StockMovementService stockMovementService;
   private final ItemService itemService;
   private final UserService userService;
+  private final EmailService emailService;
 
-  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, StockMovementService stockMovementService, ItemService itemService, UserService userService) {
+  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, StockMovementService stockMovementService, ItemService itemService, UserService userService, EmailService emailService) {
     this.orderRepository = orderRepository;
     this.sessionFactory = sessionFactory;
     this.stockMovementService = stockMovementService;
     this.itemService = itemService;
     this.userService = userService;
+    this.emailService = emailService;
   }
 
   public ServiceResponse<List<OrderEntity>> findAll() {
@@ -104,7 +108,8 @@ public class OrderService {
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
 
-      if (!userService.userExists(session, order.getUserId())) {
+      UserEntity user = userService.findById(session, order.getUserId());
+      if (user == null) {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("userId", "unregistered user");
         return new ServiceResponse<>(responseBody, Response.Status.BAD_REQUEST);
@@ -130,7 +135,7 @@ public class OrderService {
       transaction.commit();
 
       CompletableFuture.runAsync(() -> {
-        userService.sendEmail(order.getUserId(), "order successfully fulfilled");
+        emailService.sendOrderInformationToUser(order, user);
       });
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
@@ -141,6 +146,4 @@ public class OrderService {
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
-
-
 }

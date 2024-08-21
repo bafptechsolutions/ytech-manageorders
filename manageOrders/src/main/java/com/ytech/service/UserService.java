@@ -1,5 +1,6 @@
 package com.ytech.service;
 
+import com.ytech.model.OrderEntity;
 import com.ytech.model.UserEntity;
 import com.ytech.repository.UserRepository;
 import org.hibernate.Session;
@@ -10,6 +11,7 @@ import org.jvnet.hk2.annotations.Service;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Bruno Pinto
@@ -48,6 +50,10 @@ public class UserService {
     } catch (Exception e) {
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public UserEntity findById(Session session, Long id) {
+      return userRepository.findById(session, id);
   }
 
   public ServiceResponse<UserEntity> findAllOrdersById(Long id) {
@@ -119,13 +125,6 @@ public class UserService {
 
   public boolean userExists(Session session, Long userId) {
     return userRepository.userExists(session, userId);
-  }
-
-  public void sendEmail(Long userId, String message) {
-    System.out.println("EMAIL --------------------------------------------");
-    System.out.println(userId);
-    System.out.println(message);
-    System.out.println("EMAIL --------------------------------------------");
   }
 
 }
