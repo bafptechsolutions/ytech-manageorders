@@ -31,7 +31,7 @@ public class ItemController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Response items() {
-    ServiceResponse<Collection<ItemEntity>> items = itemService.todos();
+    ServiceResponse<Collection<ItemEntity>> items = itemService.all();
     return Response.status(items.getStatus()).entity(items.getData()).build();
   }
 }

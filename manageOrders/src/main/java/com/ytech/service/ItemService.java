@@ -27,11 +27,11 @@ public class ItemService {
       this.sessionFactory = sessionFactory;
    }
 
-   public ServiceResponse<Collection<ItemEntity>> todos() {
+   public ServiceResponse<Collection<ItemEntity>> all() {
       Transaction transaction = null;
       try (Session session = sessionFactory.openSession()) {
          transaction = session.beginTransaction();
-         List<ItemEntity> items = itemRepository.buscarTodos(session);
+         List<ItemEntity> items = itemRepository.getAll(session);
          transaction.commit();
          if (items.isEmpty()) {
             return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);

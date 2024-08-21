@@ -2,6 +2,7 @@ package com.ytech.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author Bruno Pinto
@@ -11,19 +12,18 @@ import java.io.Serializable;
 @Table(name = "items")
 public class ItemEntity implements Serializable {
 
-  public ItemEntity() {
-  }
-
-  public ItemEntity(String name) {
-    this.name = name;
-  }
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false, length = 100)
   private String name;
+
+  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<StockMovementEntity> stockMovementEntities;
+
+  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<OrderEntity> orderEntities;
 
   public Long getId() {
     return id;
@@ -41,4 +41,19 @@ public class ItemEntity implements Serializable {
     this.name = name;
   }
 
+  public Set<StockMovementEntity> getStockMovementEntities() {
+    return stockMovementEntities;
+  }
+
+  public void setStockMovementEntities(Set<StockMovementEntity> stockMovementEntities) {
+    this.stockMovementEntities = stockMovementEntities;
+  }
+
+  public Set<OrderEntity> getOrderEntities() {
+    return orderEntities;
+  }
+
+  public void setOrderEntities(Set<OrderEntity> orderEntities) {
+    this.orderEntities = orderEntities;
+  }
 }

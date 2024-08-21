@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ItemRepository {
 
-  public List<ItemEntity> buscarTodos(Session session) {
+  public List<ItemEntity> getAll(Session session) {
     return session.createQuery("FROM ItemEntity", ItemEntity.class).getResultList();
   }
 }
