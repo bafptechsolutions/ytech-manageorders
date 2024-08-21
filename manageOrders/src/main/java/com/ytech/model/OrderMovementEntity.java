@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @since 21/08/2024
  */
 @Entity
-@Table(name = "orderMovements")
+@Table(name = "order_movements")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderMovementEntity implements Serializable {

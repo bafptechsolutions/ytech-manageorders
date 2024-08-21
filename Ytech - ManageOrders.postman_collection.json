@@ -301,12 +301,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{YtechManageOrders}}/items",
+									"raw": "{{YtechManageOrders}}/orders/movements",
 									"host": [
 										"{{YtechManageOrders}}"
 									],
 									"path": [
-										"items"
+										"orders",
+										"movements"
 									]
 								}
 							},
@@ -318,12 +319,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{YtechManageOrders}}/items/:id",
+									"raw": "{{YtechManageOrders}}/orders/movements/:id",
 									"host": [
 										"{{YtechManageOrders}}"
 									],
 									"path": [
-										"items",
+										"orders",
+										"movements",
 										":id"
 									],
 									"variable": [
