@@ -76,7 +76,7 @@ public class ItemService {
          existingItem.setName(item.getName());
          itemRepository.save(session, existingItem);
          transaction.commit();
-         return new ServiceResponse<>(existingItem, Response.Status.OK);
+         return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
       } catch (Exception e) {
          if (transaction != null) {
             transaction.rollback();
