@@ -5,6 +5,7 @@ import com.ytech.repository.StockMovementRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author Bruno Pinto
  * @since 21/08/2024
  */
+@Service
 public class StockMovementService {
 
   private final StockMovementRepository stockMovementRepository;
