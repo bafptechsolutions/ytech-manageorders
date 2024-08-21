@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,7 +15,7 @@ import java.time.LocalDateTime;
  * @since 21/08/2024
  */
 @Entity
-@Table(name = "stockMovements")
+@Table(name = "stock_movements")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StockMovementEntity implements Serializable {
@@ -21,9 +24,12 @@ public class StockMovementEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Null(message = "CreationDate not allowed")
   @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime creationDate;
 
+  @NotNull(message = "Quantity is required")
+  @Min(value = 1, message = "minimum value of 1")
   @Column(nullable = false)
   private int quantity;
 

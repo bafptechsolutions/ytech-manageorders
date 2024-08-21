@@ -17,8 +17,8 @@ public class StockMovementRepository {
   }
 
   public List<StockMovementEntity> findAllByItemId(Session session, Long itemId) {
-    Query<StockMovementEntity> query = session.createQuery("FROM StockMovementEntity WHERE item = :itemId", StockMovementEntity.class);
-    query.setParameter("itemId", itemId);
+    Query<StockMovementEntity> query = session.createQuery("FROM StockMovementEntity WHERE itemid = :itemid", StockMovementEntity.class);
+    query.setParameter("itemid", itemId);
     return query.getResultList();
   }
 

@@ -441,12 +441,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{YtechManageOrders}}/items",
+							"raw": "{{YtechManageOrders}}/stocks/movements",
 							"host": [
 								"{{YtechManageOrders}}"
 							],
 							"path": [
-								"items"
+								"stocks",
+								"movements"
 							]
 						}
 					},
@@ -458,12 +459,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{YtechManageOrders}}/items/:id",
+							"raw": "{{YtechManageOrders}}/stocks/movements/:id",
 							"host": [
 								"{{YtechManageOrders}}"
 							],
 							"path": [
-								"items",
+								"stocks",
+								"movements",
 								":id"
 							],
 							"variable": [
@@ -482,18 +484,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{YtechManageOrders}}/items/:id",
+							"raw": "{{YtechManageOrders}}/stocks/movements/items/:id",
 							"host": [
 								"{{YtechManageOrders}}"
 							],
 							"path": [
+								"stocks",
+								"movements",
 								"items",
 								":id"
 							],
 							"variable": [
 								{
 									"key": "id",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						}
