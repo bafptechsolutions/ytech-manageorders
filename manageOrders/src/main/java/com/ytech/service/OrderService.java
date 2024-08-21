@@ -1,8 +1,6 @@
 package com.ytech.service;
 
-import com.ytech.model.ItemEntity;
-import com.ytech.model.OrderEntity;
-import com.ytech.model.UserEntity;
+import com.ytech.model.*;
 import com.ytech.repository.OrderRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +8,9 @@ import org.hibernate.Transaction;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.core.Response;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -28,14 +28,16 @@ public class OrderService {
   private final ItemService itemService;
   private final UserService userService;
   private final EmailService emailService;
+  private final OrderMovementService orderMovementService;
 
-  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, StockMovementService stockMovementService, ItemService itemService, UserService userService, EmailService emailService) {
+  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, StockMovementService stockMovementService, ItemService itemService, UserService userService, EmailService emailService, OrderMovementService orderMovementService) {
     this.orderRepository = orderRepository;
     this.sessionFactory = sessionFactory;
     this.stockMovementService = stockMovementService;
     this.itemService = itemService;
     this.userService = userService;
     this.emailService = emailService;
+    this.orderMovementService = orderMovementService;
   }
 
   public ServiceResponse<List<OrderEntity>> findAll() {
@@ -90,8 +92,6 @@ public class OrderService {
       if (order == null) {
         return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
-      ItemEntity item = session.get(ItemEntity.class, order.getItemId());
-      itemService.updateStockQuantity(session, item, item.getQuantityInStock() + order.getQuantity());
       orderRepository.delete(session, order);
       transaction.commit();
       return new ServiceResponse<>(Response.Status.NO_CONTENT);
@@ -100,6 +100,67 @@ public class OrderService {
         transaction.rollback();
       }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  public void processOrder(OrderEntity orderEntity, UserEntity userEntity) {
+    Transaction transaction = null;
+
+    try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
+
+      if (stockMovementService.hasSufficientStock(session, orderEntity.getItemId(), orderEntity.getQuantity())) {
+        List<StockMovementEntity> stockMovements = stockMovementService.allExistingStocksByItemId(session, orderEntity.getItemId());
+
+        int accumulatedQuantity = 0;
+        for (StockMovementEntity stockMovementEntity : stockMovements) {
+          if (accumulatedQuantity >= orderEntity.getQuantity()) {
+            break;
+          }
+
+          int availableQuantity = stockMovementEntity.getRemainingQuantity();
+
+          OrderMovementEntity orderMovementEntity = new OrderMovementEntity();
+          orderMovementEntity.setOrderId(orderEntity.getId());
+          orderMovementEntity.setStockMovementId(stockMovementEntity.getId());
+
+          if (accumulatedQuantity + availableQuantity <= orderEntity.getQuantity()) {
+            // utilizar todo do mesmo registo
+            accumulatedQuantity += availableQuantity;
+            stockMovementEntity.setRemainingQuantity(availableQuantity - orderEntity.getQuantity());
+            orderMovementEntity.setQuantityUsed(orderEntity.getQuantity());
+          } else {
+            // ir utilizando de vários registos
+            int needed = orderEntity.getQuantity() - accumulatedQuantity;
+            accumulatedQuantity += needed;
+            stockMovementEntity.setRemainingQuantity(availableQuantity - needed);
+            orderMovementEntity.setQuantityUsed(needed);
+          }
+
+          session.update(stockMovementEntity);
+          orderMovementService.save(session, orderMovementEntity);
+        }
+
+        /*
+          Caso durante o processamento concorrente já não exista quantidade suficiente
+         */
+        if (accumulatedQuantity < orderEntity.getQuantity()) {
+          transaction.rollback();
+        } else {
+          orderEntity.setStatus("satisfied");
+          orderRepository.save(session, orderEntity);
+          transaction.commit();
+        }
+      }
+
+      CompletableFuture.runAsync(() -> {
+        emailService.sendOrderInformationToUser(orderEntity, userEntity);
+      });
+    } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
+      e.printStackTrace();
     }
   }
 
@@ -122,20 +183,14 @@ public class OrderService {
         return new ServiceResponse<>(responseBody, Response.Status.NOT_FOUND);
       }
 
-      order.setCreationDate(LocalDateTime.now());
-      if (!itemService.hasSufficientStock(session, item.getId(), order.getQuantity()) || !stockMovementService.hasSufficientStock(session, item.getId(), order.getQuantity())) {
-        order.setStatus("Pending");
-        orderRepository.save(session, order);
-        transaction.commit();
-        return new ServiceResponse<>("There isn't enough stock available. It will remain in pending status until stock is available.",Response.Status.ACCEPTED);
-      }
-      itemService.updateStockQuantity(session, item, item.getQuantityInStock() - order.getQuantity());
-      order.setStatus("satisfied");
+      Instant now = Instant.now();
+      LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
+      order.setCreationDate(localDateTime);
+      order.setStatus("Pending");
       orderRepository.save(session, order);
       transaction.commit();
-
       CompletableFuture.runAsync(() -> {
-        emailService.sendOrderInformationToUser(order, user);
+        processOrder(order, user);
       });
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
@@ -146,4 +201,6 @@ public class OrderService {
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
+
+
 }

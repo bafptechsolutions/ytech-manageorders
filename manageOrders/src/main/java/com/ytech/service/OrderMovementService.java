@@ -52,19 +52,8 @@ public class OrderMovementService {
     }
   }
 
-  public ServiceResponse<OrderMovementEntity> create(OrderMovementEntity orderMovement) {
-    Transaction transaction = null;
-    try (Session session = sessionFactory.openSession()) {
-      transaction = session.beginTransaction();
+  public void save(Session session, OrderMovementEntity orderMovement) {
       orderMovementRepository.save(session, orderMovement);
-      transaction.commit();
-      return new ServiceResponse<>(orderMovement, Response.Status.CREATED);
-    } catch (Exception e) {
-      if (transaction != null) {
-        transaction.rollback();
-      }
-      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
-    }
   }
 
   public void processPendingOrders(StockMovementEntity stockMovement) {
@@ -72,6 +61,18 @@ public class OrderMovementService {
     System.out.println(stockMovement.getId());
     System.out.println(stockMovement.getItemId());
     System.out.println(stockMovement.getQuantity());
+
+    OrderMovementEntity orderMovementEntity = new OrderMovementEntity();
+    orderMovementEntity.setOrderId(order.getId());
+    orderMovementEntity.setQuantityUsed(0);
+    orderMovementService.save(session, orderMovementEntity);
+
+    // procura por pedidos pendentes resp+eitante ao item que entrou
+
+    // para cada pedido pendente efetua o registo
+
+
+
     // enviar email quando item for satisfeito
   }
 }

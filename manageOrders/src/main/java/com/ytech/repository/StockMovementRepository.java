@@ -37,4 +37,12 @@ public class StockMovementRepository {
     query.setParameter("itemId", itemId);
     return query.uniqueResult();
   }
+
+  public List<StockMovementEntity> allExistingStocksByItemId(Session session, Long itemId) {
+    List<StockMovementEntity> existengStocks = session.createQuery(
+            "FROM StockMovementEntity WHERE item_id = :itemId AND quantity > 0 ORDER BY id ASC", StockMovementEntity.class)
+        .setParameter("itemId", itemId)
+        .list();
+    return existengStocks;
+  }
 }

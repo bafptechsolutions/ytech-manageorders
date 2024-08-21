@@ -25,9 +25,6 @@ public class ItemEntity implements Serializable {
   @Column(nullable = false, length = 100)
   private String name;
 
-  @Column(nullable = false)
-  private Integer quantityInStock;
-
   public Long getId() {
     return id;
   }
@@ -42,13 +39,5 @@ public class ItemEntity implements Serializable {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public Integer getQuantityInStock() {
-    return quantityInStock;
-  }
-
-  public void setQuantityInStock(Integer quantityInStock) {
-    this.quantityInStock = quantityInStock;
   }
 }

@@ -37,6 +37,11 @@ public class StockMovementEntity implements Serializable {
   @Column(nullable = false)
   private int quantity;
 
+  @NotNull(message = "Quantity is required")
+  @Min(value = 1, message = "minimum value of 1")
+  @Column(name = "remaining_quantity", nullable = false)
+  private int remainingQuantity;
+
   public Long getId() {
     return id;
   }
@@ -67,5 +72,15 @@ public class StockMovementEntity implements Serializable {
 
   public void setItemId(@NotNull Long itemId) {
     this.itemId = itemId;
+  }
+
+  @NotNull(message = "Quantity is required")
+  @Min(value = 1, message = "minimum value of 1")
+  public int getRemainingQuantity() {
+    return remainingQuantity;
+  }
+
+  public void setRemainingQuantity(@NotNull(message = "Quantity is required") @Min(value = 1, message = "minimum value of 1") int remainingQuantity) {
+    this.remainingQuantity = remainingQuantity;
   }
 }

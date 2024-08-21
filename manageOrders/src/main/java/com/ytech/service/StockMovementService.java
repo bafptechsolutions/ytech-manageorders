@@ -75,6 +75,10 @@ public class StockMovementService {
     return totalStock >= requiredQuantity;
   }
 
+  public List<StockMovementEntity> allExistingStocksByItemId(Session session, Long itemId) {
+    return stockMovementRepository.allExistingStocksByItemId(session, itemId);
+  }
+
   public ServiceResponse<StockMovementEntity> createStockMovement(StockMovementEntity stockMovement) {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
@@ -86,6 +90,7 @@ public class StockMovementService {
         return new ServiceResponse<>(responseBody, Response.Status.NOT_FOUND);
       }
       itemService.updateStockQuantity(session, item, item.getQuantityInStock() + stockMovement.getQuantity());
+      stockMovement.setRemainingQuantity(stockMovement.getQuantity());
       stockMovementRepository.save(session, stockMovement);
       transaction.commit();
 

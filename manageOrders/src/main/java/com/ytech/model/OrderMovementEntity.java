@@ -20,16 +20,14 @@ public class OrderMovementEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
-  private int quantityUsed;
+  @Column(name = "order_id", nullable = false)
+  private Long orderId;
 
-//  @ManyToOne
-//  @JoinColumn(name = "order_id", nullable = false)
-//  private OrderEntity orderEntity;
-//
-//  @ManyToOne
-//  @JoinColumn(name = "stock_movement_id", nullable = false)
-//  private StockMovementEntity stockMovementEntity;
+  @Column(name = "stockmovement_id")
+  private Long stockMovementId;
+
+  @Column(name = "quantity_used", nullable = false)
+  private int quantityUsed;
 
   public Long getId() {
     return id;
@@ -37,6 +35,22 @@ public class OrderMovementEntity implements Serializable {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public Long getOrderId() {
+    return orderId;
+  }
+
+  public void setOrderId(Long orderId) {
+    this.orderId = orderId;
+  }
+
+  public Long getStockMovementId() {
+    return stockMovementId;
+  }
+
+  public void setStockMovementId(Long stockMovementId) {
+    this.stockMovementId = stockMovementId;
   }
 
   public int getQuantityUsed() {
