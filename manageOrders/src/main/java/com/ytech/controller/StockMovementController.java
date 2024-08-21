@@ -15,7 +15,7 @@ import java.util.List;
  * @author Bruno Pinto
  * @since 21/08/2024
  */
-@Path("/stock/movements")
+@Path("/stocks/movements")
 @Service
 public class StockMovementController {
 
