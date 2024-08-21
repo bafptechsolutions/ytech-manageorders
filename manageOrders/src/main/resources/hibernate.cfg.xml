@@ -20,5 +20,9 @@
         <property name="hibernate.format_sql">true</property>
 
         <mapping class="com.ytech.model.ItemEntity"/>
+        <mapping class="com.ytech.model.OrderEntity"/>
+        <mapping class="com.ytech.model.OrderMovementEntity"/>
+        <mapping class="com.ytech.model.StockMovementEntity"/>
+        <mapping class="com.ytech.model.UserEntity"/>
     </session-factory>
 </hibernate-configuration>

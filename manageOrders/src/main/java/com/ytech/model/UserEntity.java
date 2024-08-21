@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @author Bruno Pinto
@@ -21,14 +22,17 @@ public class UserEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotBlank(message = "Name is required")
   @Column(nullable = false, length = 100)
   private String name;
 
+  @NotBlank(message = "Email is required")
+  @Email(message = "Email should be valid")
   @Column(nullable = false, length = 100, unique = true)
   private String email;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<OrderEntity> orders;
+//  @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private Set<OrderEntity> orders;
 
   public Long getId() {
     return id;
@@ -54,11 +58,11 @@ public class UserEntity implements Serializable {
     this.email = email;
   }
 
-  public Set<OrderEntity> getOrders() {
-    return orders;
-  }
-
-  public void setOrders(Set<OrderEntity> orders) {
-    this.orders = orders;
-  }
+//  public Set<OrderEntity> getOrders() {
+//    return orders;
+//  }
+//
+//  public void setOrders(Set<OrderEntity> orders) {
+//    this.orders = orders;
+//  }
 }

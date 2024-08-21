@@ -30,6 +30,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     implementation 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.13.0'
     implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.31'
+
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation 'org.glassfish.jersey.ext:jersey-bean-validation:2.31'
 }
 
 tasks.withType(JavaCompile) {

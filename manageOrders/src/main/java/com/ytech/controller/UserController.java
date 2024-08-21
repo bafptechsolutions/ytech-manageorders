@@ -6,6 +6,7 @@ import com.ytech.service.UserService;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,10 +42,18 @@ public class UserController {
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
+  @GET
+  @Path("/{id}/orders")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAllUserOrdersById(@PathParam("id") Long id) {
+    ServiceResponse<UserEntity> response = userService.findAllOrdersById(id);
+    return Response.status(response.getStatus()).entity(response.getBody()).build();
+  }
+
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response createUser(UserEntity user) {
+  public Response createUser(@Valid UserEntity user) {
     ServiceResponse<UserEntity> response = userService.create(user);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
