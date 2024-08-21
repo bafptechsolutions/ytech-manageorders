@@ -1,6 +1,7 @@
 package com.ytech.service;
 
 import com.ytech.model.ItemEntity;
+import com.ytech.model.StockMovementEntity;
 import com.ytech.repository.ItemRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -113,4 +114,5 @@ public class ItemService {
       itemEntity.setQuantityInStock(quantity);
       itemRepository.save(session, itemEntity);
    }
+
 }

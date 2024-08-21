@@ -1,6 +1,7 @@
 package com.ytech.service;
 
 import com.ytech.model.OrderMovementEntity;
+import com.ytech.model.StockMovementEntity;
 import com.ytech.repository.OrderMovementRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -63,5 +64,12 @@ public class OrderMovementService {
       }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public void processPendingOrders(StockMovementEntity stockMovement) {
+    System.out.println("a processar pedidos pendentes");
+    System.out.println(stockMovement.getId());
+    System.out.println(stockMovement.getItemId());
+    System.out.println(stockMovement.getQuantity());
   }
 }

@@ -121,4 +121,11 @@ public class UserService {
     return userRepository.userExists(session, userId);
   }
 
+  public void sendEmail(Long userId, String message) {
+    System.out.println("EMAIL --------------------------------------------");
+    System.out.println(userId);
+    System.out.println(message);
+    System.out.println("EMAIL --------------------------------------------");
+  }
+
 }

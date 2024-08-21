@@ -11,6 +11,7 @@ import org.jvnet.hk2.annotations.Service;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Bruno Pinto
@@ -127,7 +128,10 @@ public class OrderService {
       order.setStatus("satisfied");
       orderRepository.save(session, order);
       transaction.commit();
-      // falta emviar email a dizer que está satisfeito e finali«zafdo
+
+      CompletableFuture.runAsync(() -> {
+        userService.sendEmail(order.getUserId(), "order successfully fulfilled");
+      });
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
       System.out.println(e);

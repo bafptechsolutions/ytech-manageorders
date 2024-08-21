@@ -1,5 +1,6 @@
 package com.ytech.repository;
 
+import com.ytech.model.OrderEntity;
 import com.ytech.model.StockMovementEntity;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -27,7 +28,7 @@ public class StockMovementRepository {
   }
 
   public void save(Session session, StockMovementEntity stockMovementEntity) {
-
+    session.saveOrUpdate(stockMovementEntity);
   }
 
   public long getCurrentStockForItem(Session session, Long itemId) {

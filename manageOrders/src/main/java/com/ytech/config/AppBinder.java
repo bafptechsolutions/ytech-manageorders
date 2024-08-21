@@ -24,7 +24,7 @@ public class AppBinder extends AbstractBinder {
 
     ItemService itemService = new ItemService(itemRepository, sessionFactory);
     OrderMovementService orderMovementService = new OrderMovementService(orderMovementRepository, sessionFactory);
-    StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory);
+    StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory, itemService, orderMovementService);
     UserService userService = new UserService(userRepository, sessionFactory);
     OrderService orderService = new OrderService(orderRepository, sessionFactory, stockMovementService, itemService, userService);
 
