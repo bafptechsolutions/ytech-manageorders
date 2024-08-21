@@ -2,6 +2,7 @@ package com.ytech.repository;
 
 import com.ytech.model.ItemEntity;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -26,4 +27,5 @@ public class ItemRepository {
   public void delete(Session session, ItemEntity item) {
     session.delete(item);
   }
+
 }

@@ -1,6 +1,8 @@
 package com.ytech.service;
 
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Bruno Pinto
@@ -14,6 +16,27 @@ public class ServiceResponse<T> {
       this.body = body;
       this.status = status;
   }
+
+  public ServiceResponse(Response.Status status) {
+    this.body = null;
+    this.status = status;
+  }
+
+  public ServiceResponse(String message, Response.Status status) {
+    Map<String, Object> responseBody = new HashMap<>();
+    responseBody.put("message", message);
+    this.body = (T) responseBody;
+    this.status = status;
+  }
+
+  public ServiceResponse(Map<String, Object> errorsBody, Response.Status status) {
+    Map<String, Object> responseBody = new HashMap<>();
+    responseBody.put("errors", errorsBody);
+    this.body = (T) responseBody;
+    this.status = status;
+  }
+
+
 
   public T getBody() {
     return body;

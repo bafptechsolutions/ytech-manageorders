@@ -23,10 +23,11 @@ public class AppBinder extends AbstractBinder {
     UserRepository userRepository = new UserRepository();
 
     ItemService itemService = new ItemService(itemRepository, sessionFactory);
-    OrderService orderService = new OrderService(orderRepository, sessionFactory);
     OrderMovementService orderMovementService = new OrderMovementService(orderMovementRepository, sessionFactory);
     StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory);
     UserService userService = new UserService(userRepository, sessionFactory);
+    OrderService orderService = new OrderService(orderRepository, sessionFactory, stockMovementService, itemService, userService);
+
 
     bind(itemService).to(ItemService.class);
     bind(orderService).to(OrderService.class);

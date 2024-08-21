@@ -28,14 +28,14 @@ public class StockMovementEntity implements Serializable {
   @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime creationDate;
 
+  @NotNull
+  @Column(name = "item_id", nullable = false)
+  private Long itemId;
+
   @NotNull(message = "Quantity is required")
   @Min(value = 1, message = "minimum value of 1")
   @Column(nullable = false)
   private int quantity;
-
-//  @ManyToOne
-//  @JoinColumn(name = "item_id", nullable = false)
-//  private ItemEntity item;
 
   public Long getId() {
     return id;
@@ -59,5 +59,13 @@ public class StockMovementEntity implements Serializable {
 
   public void setQuantity(int quantity) {
     this.quantity = quantity;
+  }
+
+  public @NotNull Long getItemId() {
+    return itemId;
+  }
+
+  public void setItemId(@NotNull Long itemId) {
+    this.itemId = itemId;
   }
 }

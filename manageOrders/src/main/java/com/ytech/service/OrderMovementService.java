@@ -34,7 +34,7 @@ public class OrderMovementService {
       }
       return new ServiceResponse<>(orderMovements, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -46,7 +46,7 @@ public class OrderMovementService {
       }
       return new ServiceResponse<>(orderMovement, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -61,7 +61,7 @@ public class OrderMovementService {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -25,11 +25,8 @@ public class ItemEntity implements Serializable {
   @Column(nullable = false, length = 100)
   private String name;
 
-//  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private Set<StockMovementEntity> stockMovementEntities;
-
-//  @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private Set<OrderEntity> orderEntities;
+  @Column(nullable = false)
+  private Integer quantityInStock;
 
   public Long getId() {
     return id;
@@ -47,19 +44,11 @@ public class ItemEntity implements Serializable {
     this.name = name;
   }
 
-//  public Set<StockMovementEntity> getStockMovementEntities() {
-//    return stockMovementEntities;
-//  }
-//
-//  public void setStockMovementEntities(Set<StockMovementEntity> stockMovementEntities) {
-//    this.stockMovementEntities = stockMovementEntities;
-//  }
-//
-//  public Set<OrderEntity> getOrderEntities() {
-//    return orderEntities;
-//  }
-//
-//  public void setOrderEntities(Set<OrderEntity> orderEntities) {
-//    this.orderEntities = orderEntities;
-//  }
+  public Integer getQuantityInStock() {
+    return quantityInStock;
+  }
+
+  public void setQuantityInStock(Integer quantityInStock) {
+    this.quantityInStock = quantityInStock;
+  }
 }

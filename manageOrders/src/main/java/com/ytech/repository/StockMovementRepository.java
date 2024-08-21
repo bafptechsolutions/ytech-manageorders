@@ -17,8 +17,8 @@ public class StockMovementRepository {
   }
 
   public List<StockMovementEntity> findAllByItemId(Session session, Long itemId) {
-    Query<StockMovementEntity> query = session.createQuery("FROM StockMovementEntity WHERE itemid = :itemid", StockMovementEntity.class);
-    query.setParameter("itemid", itemId);
+    Query<StockMovementEntity> query = session.createQuery("FROM StockMovementEntity WHERE item_id = :itemId", StockMovementEntity.class);
+    query.setParameter("itemId", itemId);
     return query.getResultList();
   }
 
@@ -27,7 +27,13 @@ public class StockMovementRepository {
   }
 
   public void save(Session session, StockMovementEntity stockMovementEntity) {
-    session.saveOrUpdate(stockMovementEntity);
+
   }
 
+  public long getCurrentStockForItem(Session session, Long itemId) {
+    Query<Long> query = session.createQuery(
+        "SELECT COALESCE(SUM(quantity), 0) FROM StockMovementEntity WHERE itemId = :itemId", Long.class);
+    query.setParameter("itemId", itemId);
+    return query.uniqueResult();
+  }
 }

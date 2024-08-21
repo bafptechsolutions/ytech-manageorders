@@ -46,7 +46,7 @@ public class OrderController {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response createOrder(@Valid OrderEntity order) {
-    ServiceResponse<OrderEntity> response = orderService.create(order);
+    ServiceResponse<OrderEntity> response = orderService.createOrder(order);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 

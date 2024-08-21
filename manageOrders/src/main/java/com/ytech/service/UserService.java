@@ -34,7 +34,7 @@ public class UserService {
       }
       return new ServiceResponse<>(users, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -46,7 +46,7 @@ public class UserService {
       }
       return new ServiceResponse<>(user, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -58,7 +58,7 @@ public class UserService {
       }
       return new ServiceResponse<>(user, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -73,7 +73,7 @@ public class UserService {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -89,12 +89,12 @@ public class UserService {
       existingUser.setEmail(user.getEmail());
       userRepository.save(session, existingUser);
       transaction.commit();
-      return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
+      return new ServiceResponse<>(Response.Status.NO_CONTENT);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -104,17 +104,21 @@ public class UserService {
       transaction = session.beginTransaction();
       UserEntity user = userRepository.findById(session, id);
       if (user == null) {
-        return new ServiceResponse<>(null, Response.Status.NOT_FOUND);
+        return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
       userRepository.delete(session, user);
       transaction.commit();
-      return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
+      return new ServiceResponse<>(Response.Status.NO_CONTENT);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public boolean userExists(Session session, Long userId) {
+    return userRepository.userExists(session, userId);
   }
 
 }

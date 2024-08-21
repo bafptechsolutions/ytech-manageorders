@@ -2,6 +2,7 @@ package com.ytech.repository;
 
 import com.ytech.model.UserEntity;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -25,5 +26,13 @@ public class UserRepository {
 
   public void delete(Session session, UserEntity userEntity) {
     session.delete(userEntity);
+  }
+
+  public boolean userExists(Session session, Long userId) {
+    Query<Long> query = session.createQuery(
+        "SELECT COUNT(id) FROM UserEntity WHERE id = :userId", Long.class);
+    query.setParameter("userId", userId);
+    Long count = query.uniqueResult();
+    return count != null && count > 0;
   }
 }

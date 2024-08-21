@@ -24,30 +24,24 @@ public class OrderEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Null(message = "CreationDate not allowed")
-  @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  @Column(name = "creationdate", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime creationDate;
 
-  @NotNull(message = "Quantity is required")
+  @NotNull
   @Min(value = 1, message = "minimum value of 1")
   @Column(nullable = false)
   private int quantity;
 
-  @Null(message = "CreationDate not allowed")
-  @Column(length = 20, nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'Pending'")
+  @Column(length = 20, nullable = false)
   private String status;
 
-//  @ManyToOne
-//  @JoinColumn(name = "item_id", nullable = false)
-//  private ItemEntity itemEntity;
+  @NotNull
+  @Column(name = "item_id", nullable = false)
+  private Long itemId;
 
-//  @ManyToOne
-//  @JoinColumn(name = "userid", nullable = false)
-//  private UserEntity userEntity;
-
-//  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private Set<OrderMovementEntity> orderMovements;
-
+  @NotNull
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
   public Long getId() {
     return id;
@@ -81,11 +75,19 @@ public class OrderEntity implements Serializable {
     this.status = status;
   }
 
-//  public UserEntity getUserEntity() {
-//    return userEntity;
-//  }
-//
-//  public void setUserEntity(UserEntity userEntity) {
-//    this.userEntity = userEntity;
-//  }
+  public Long getItemId() {
+    return itemId;
+  }
+
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
+
+  public @NotNull Long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(@NotNull Long userId) {
+    this.userId = userId;
+  }
 }

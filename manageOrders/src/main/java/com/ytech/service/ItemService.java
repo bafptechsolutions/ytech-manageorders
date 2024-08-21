@@ -34,7 +34,7 @@ public class ItemService {
          }
          return new ServiceResponse<>(items, Response.Status.OK);
       } catch (Exception e) {
-         return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+         return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }
 
@@ -46,7 +46,7 @@ public class ItemService {
          }
          return new ServiceResponse<>(item, Response.Status.OK);
       } catch (Exception e) {
-         return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+         return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }
 
@@ -61,7 +61,7 @@ public class ItemService {
          if (transaction != null) {
             transaction.rollback();
          }
-         return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+         return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }
 
@@ -76,12 +76,12 @@ public class ItemService {
          existingItem.setName(item.getName());
          itemRepository.save(session, existingItem);
          transaction.commit();
-         return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
+         return new ServiceResponse<>(Response.Status.NO_CONTENT);
       } catch (Exception e) {
          if (transaction != null) {
             transaction.rollback();
          }
-         return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+         return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }
 
@@ -91,16 +91,26 @@ public class ItemService {
          transaction = session.beginTransaction();
          ItemEntity item = itemRepository.findById(session, id);
          if (item == null) {
-            return new ServiceResponse<>(null, Response.Status.NOT_FOUND);
+            return new ServiceResponse<>(Response.Status.NOT_FOUND);
          }
          itemRepository.delete(session, item);
          transaction.commit();
-         return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
+         return new ServiceResponse<>(Response.Status.NO_CONTENT);
       } catch (Exception e) {
          if (transaction != null) {
             transaction.rollback();
          }
-         return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+         return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
+   }
+
+   public boolean hasSufficientStock(Session session, Long itemId, int requiredQuantity) {
+      long totalStock = itemRepository.findById(session, itemId).getQuantityInStock();
+      return totalStock >= requiredQuantity;
+   }
+
+   public void updateStockQuantity(Session session, ItemEntity itemEntity, int quantity) {
+      itemEntity.setQuantityInStock(quantity);
+      itemRepository.save(session, itemEntity);
    }
 }

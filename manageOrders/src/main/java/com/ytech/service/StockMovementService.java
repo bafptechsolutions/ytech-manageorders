@@ -34,7 +34,7 @@ public class StockMovementService {
       }
       return new ServiceResponse<>(stockMovements, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -46,7 +46,7 @@ public class StockMovementService {
       }
       return new ServiceResponse<>(stockMovements, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -58,7 +58,7 @@ public class StockMovementService {
       }
       return new ServiceResponse<>(stockMovement, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -73,8 +73,13 @@ public class StockMovementService {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public boolean hasSufficientStock(Session session, Long itemId, int requiredQuantity) {
+    long totalStock = stockMovementRepository.getCurrentStockForItem(session, itemId);
+    return totalStock >= requiredQuantity;
   }
 
 }

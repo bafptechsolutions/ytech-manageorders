@@ -1,5 +1,6 @@
 package com.ytech.service;
 
+import com.ytech.model.ItemEntity;
 import com.ytech.model.OrderEntity;
 import com.ytech.repository.OrderRepository;
 import org.hibernate.Session;
@@ -8,8 +9,8 @@ import org.hibernate.Transaction;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * @author Bruno Pinto
@@ -20,10 +21,16 @@ public class OrderService {
 
   private final OrderRepository orderRepository;
   private final SessionFactory sessionFactory;
+  private final StockMovementService stockMovementService;
+  private final ItemService itemService;
+  private final UserService userService;
 
-  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory) {
+  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, StockMovementService stockMovementService, ItemService itemService, UserService userService) {
     this.orderRepository = orderRepository;
     this.sessionFactory = sessionFactory;
+    this.stockMovementService = stockMovementService;
+    this.itemService = itemService;
+    this.userService = userService;
   }
 
   public ServiceResponse<List<OrderEntity>> findAll() {
@@ -34,7 +41,7 @@ public class OrderService {
       }
       return new ServiceResponse<>(orders, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -46,22 +53,7 @@ public class OrderService {
       }
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  public ServiceResponse<OrderEntity> create(OrderEntity order) {
-    Transaction transaction = null;
-    try (Session session = sessionFactory.openSession()) {
-      transaction = session.beginTransaction();
-      orderRepository.save(session, order);
-      transaction.commit();
-      return new ServiceResponse<>(order, Response.Status.CREATED);
-    } catch (Exception e) {
-      if (transaction != null) {
-        transaction.rollback();
-      }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -76,12 +68,12 @@ public class OrderService {
       existingOrder.setStatus(status);
       orderRepository.save(session, existingOrder);
       transaction.commit();
-      return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
+      return new ServiceResponse<>(Response.Status.NO_CONTENT);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -91,16 +83,60 @@ public class OrderService {
       transaction = session.beginTransaction();
       OrderEntity order = orderRepository.findById(session, id);
       if (order == null) {
-        return new ServiceResponse<>(null, Response.Status.NOT_FOUND);
+        return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
+      ItemEntity item = session.get(ItemEntity.class, order.getItemId());
+      itemService.updateStockQuantity(session, item, item.getQuantityInStock() + order.getQuantity());
       orderRepository.delete(session, order);
       transaction.commit();
-      return new ServiceResponse<>(null, Response.Status.NO_CONTENT);
+      return new ServiceResponse<>(Response.Status.NO_CONTENT);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
       }
-      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
+
+  public ServiceResponse<OrderEntity> createOrder(OrderEntity order) {
+    Transaction transaction = null;
+    try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
+
+      if (!userService.userExists(session, order.getUserId())) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("userId", "unregistered user");
+        return new ServiceResponse<>(responseBody, Response.Status.BAD_REQUEST);
+      }
+
+      ItemEntity item = session.get(ItemEntity.class, order.getItemId());
+      if (item == null) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("itemId", "does not exist");
+        return new ServiceResponse<>(responseBody, Response.Status.NOT_FOUND);
+      }
+
+      order.setCreationDate(LocalDateTime.now());
+      if (!itemService.hasSufficientStock(session, item.getId(), order.getQuantity()) || !stockMovementService.hasSufficientStock(session, item.getId(), order.getQuantity())) {
+        order.setStatus("Pending");
+        orderRepository.save(session, order);
+        transaction.commit();
+        return new ServiceResponse<>("There isn't enough stock available. It will remain in pending status until stock is available.",Response.Status.ACCEPTED);
+      }
+      itemService.updateStockQuantity(session, item, item.getQuantityInStock() - order.getQuantity());
+      order.setStatus("satisfied");
+      orderRepository.save(session, order);
+      transaction.commit();
+      // falta emviar email a dizer que está satisfeito e finali«zafdo
+      return new ServiceResponse<>(order, Response.Status.OK);
+    } catch (Exception e) {
+      System.out.println(e);
+      if (transaction != null) {
+        transaction.rollback();
+      }
+      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+
 }
