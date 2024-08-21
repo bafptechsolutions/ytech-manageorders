@@ -15,14 +15,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -35,14 +32,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items",
 								":id"
 							],
@@ -62,14 +56,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -82,14 +73,11 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -102,14 +90,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items",
 								":id"
 							],
@@ -134,15 +119,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/users",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
-								"items"
+								"users"
 							]
 						}
 					},
@@ -154,15 +136,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/users/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
-								"items",
+								"users",
 								":id"
 							],
 							"variable": [
@@ -180,16 +159,22 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"pedro\",\r\n    \"email\": \"pedro@teste.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/users",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
-								"items"
+								"users"
 							]
 						}
 					},
@@ -200,16 +185,29 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"pedro\",\r\n    \"email\": \"pedro@teste.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/users/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
-								"items"
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
 							]
 						}
 					},
@@ -221,15 +219,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/users/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
-								"items",
+								"users",
 								":id"
 							],
 							"variable": [
@@ -256,14 +251,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/items",
-									"protocol": "http",
+									"raw": "{{YtechManageOrders}}/items",
 									"host": [
-										"localhost"
+										"{{YtechManageOrders}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
 										"items"
 									]
 								}
@@ -276,14 +268,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/items/:id",
-									"protocol": "http",
+									"raw": "{{YtechManageOrders}}/items/:id",
 									"host": [
-										"localhost"
+										"{{YtechManageOrders}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
 										"items",
 										":id"
 									],
@@ -305,14 +294,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -325,14 +311,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items",
 								":id"
 							],
@@ -352,14 +335,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -372,14 +352,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items",
 								":id"
 							],
@@ -399,14 +376,11 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -424,14 +398,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items"
 							]
 						}
@@ -444,14 +415,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items",
 								":id"
 							],
@@ -471,14 +439,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/items/:id",
-							"protocol": "http",
+							"raw": "{{YtechManageOrders}}/items/:id",
 							"host": [
-								"localhost"
+								"{{YtechManageOrders}}"
 							],
-							"port": "8080",
 							"path": [
-								"api",
 								"items",
 								":id"
 							],
@@ -493,6 +458,35 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "YtechManageOrders",
+			"value": "http://localhost:8080/api",
+			"type": "string"
 		}
 	]
 }
