@@ -41,6 +41,14 @@ public class UserController {
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
+  @GET
+  @Path("/{id}/orders")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAllUserOrdersById(@PathParam("id") Long id) {
+    ServiceResponse<UserEntity> response = userService.findAllOrdersById(id);
+    return Response.status(response.getStatus()).entity(response.getBody()).build();
+  }
+
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)

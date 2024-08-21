@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * @author Bruno Pinto
@@ -27,8 +26,8 @@ public class UserEntity implements Serializable {
   @Column(nullable = false, length = 100, unique = true)
   private String email;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<OrderEntity> orders;
+//  @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private Set<OrderEntity> orders;
 
   public Long getId() {
     return id;
@@ -54,11 +53,11 @@ public class UserEntity implements Serializable {
     this.email = email;
   }
 
-  public Set<OrderEntity> getOrders() {
-    return orders;
-  }
-
-  public void setOrders(Set<OrderEntity> orders) {
-    this.orders = orders;
-  }
+//  public Set<OrderEntity> getOrders() {
+//    return orders;
+//  }
+//
+//  public void setOrders(Set<OrderEntity> orders) {
+//    this.orders = orders;
+//  }
 }

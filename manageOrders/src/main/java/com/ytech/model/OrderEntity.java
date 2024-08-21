@@ -24,22 +24,23 @@ public class OrderEntity implements Serializable {
   @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime creationDate;
 
-  @ManyToOne
-  @JoinColumn(name = "item_id", nullable = false)
-  private ItemEntity item;
-
   @Column(nullable = false)
   private int quantity;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserEntity userEntity;
 
   @Column(length = 20, nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'Pending'")
   private String status;
 
+//  @ManyToOne
+//  @JoinColumn(name = "item_id", nullable = false)
+//  private ItemEntity itemEntity;
+
+//  @ManyToOne
+//  @JoinColumn(name = "userid", nullable = false)
+//  private UserEntity userEntity;
+
 //  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 //  private Set<OrderMovementEntity> orderMovements;
+
 
   public Long getId() {
     return id;
@@ -57,28 +58,12 @@ public class OrderEntity implements Serializable {
     this.creationDate = creationDate;
   }
 
-  public ItemEntity getItem() {
-    return item;
-  }
-
-  public void setItem(ItemEntity item) {
-    this.item = item;
-  }
-
   public int getQuantity() {
     return quantity;
   }
 
   public void setQuantity(int quantity) {
     this.quantity = quantity;
-  }
-
-  public UserEntity getUser() {
-    return userEntity;
-  }
-
-  public void setUser(UserEntity userEntity) {
-    this.userEntity = userEntity;
   }
 
   public String getStatus() {
@@ -89,11 +74,11 @@ public class OrderEntity implements Serializable {
     this.status = status;
   }
 
-//  public Set<OrderMovementEntity> getOrderMovements() {
-//    return orderMovements;
+//  public UserEntity getUserEntity() {
+//    return userEntity;
 //  }
-
-//  public void setOrderMovements(Set<OrderMovementEntity> orderMovements) {
-//    this.orderMovements = orderMovements;
+//
+//  public void setUserEntity(UserEntity userEntity) {
+//    this.userEntity = userEntity;
 //  }
 }

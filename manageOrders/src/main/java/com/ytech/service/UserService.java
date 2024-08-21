@@ -50,6 +50,18 @@ public class UserService {
     }
   }
 
+  public ServiceResponse<UserEntity> findAllOrdersById(Long id) {
+    try (Session session = sessionFactory.openSession()) {
+      UserEntity user = userRepository.findById(session, id);
+      if (user == null) {
+        return new ServiceResponse<>(new UserEntity(), Response.Status.NOT_FOUND);
+      }
+      return new ServiceResponse<>(user, Response.Status.OK);
+    } catch (Exception e) {
+      return new ServiceResponse<>(null, Response.Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   public ServiceResponse<UserEntity> create(UserEntity user) {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
