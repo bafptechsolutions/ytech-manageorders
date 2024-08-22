@@ -25,24 +25,27 @@ public class AppBinder extends AbstractBinder {
     EmailService emailService = new EmailService();
     ItemService itemService = new ItemService(itemRepository, sessionFactory);
     OrderMovementService orderMovementService = new OrderMovementService(orderMovementRepository, sessionFactory);
-    StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory, itemService, orderMovementService);
     UserService userService = new UserService(userRepository, sessionFactory);
-    OrderService orderService = new OrderService(orderRepository, sessionFactory, stockMovementService, itemService, userService, emailService, orderMovementService);
-
+    StockService stockService = new StockService(stockMovementRepository, sessionFactory);
+    ProcessingOrdersService processingOrdersService = new ProcessingOrdersService(orderRepository, sessionFactory, stockService, emailService, orderMovementService, userService, stockMovementRepository);
+    StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory, processingOrdersService);
+    OrderService orderService = new OrderService(orderRepository, sessionFactory, userService, processingOrdersService);
 
     bind(emailService).to(EmailService.class);
     bind(itemService).to(ItemService.class);
+    bind(processingOrdersService).to(ProcessingOrdersService.class);
     bind(orderService).to(OrderService.class);
+    bind(stockService).to(StockService.class);
     bind(orderMovementService).to(OrderMovementService.class);
     bind(stockMovementService).to(StockMovementService.class);
     bind(userService).to(UserService.class);
 
     // Para vincular os controladores ao container do HK2, por estarem indicados como @Service
     bind(ItemController.class).to(ItemController.class);
-    bind(itemService).to(ItemService.class);
-    bind(orderService).to(OrderService.class);
-    bind(orderMovementService).to(OrderMovementService.class);
-    bind(stockMovementService).to(StockMovementService.class);
-    bind(userService).to(UserService.class);
+//    bind(itemService).to(ItemService.class);
+//    bind(orderService).to(OrderService.class);
+//    bind(orderMovementService).to(OrderMovementService.class);
+//    bind(stockMovementService).to(StockMovementService.class);
+//    bind(userService).to(UserService.class);
   }
 }

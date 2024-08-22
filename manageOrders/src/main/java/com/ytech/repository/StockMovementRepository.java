@@ -1,6 +1,5 @@
 package com.ytech.repository;
 
-import com.ytech.model.OrderEntity;
 import com.ytech.model.StockMovementEntity;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -33,14 +32,14 @@ public class StockMovementRepository {
 
   public long getCurrentStockForItem(Session session, Long itemId) {
     Query<Long> query = session.createQuery(
-        "SELECT COALESCE(SUM(quantity), 0) FROM StockMovementEntity WHERE itemId = :itemId", Long.class);
+        "SELECT COALESCE(SUM(remainingQuantity), 0) FROM StockMovementEntity WHERE itemId = :itemId", Long.class);
     query.setParameter("itemId", itemId);
     return query.uniqueResult();
   }
 
   public List<StockMovementEntity> allExistingStocksByItemId(Session session, Long itemId) {
     List<StockMovementEntity> existengStocks = session.createQuery(
-            "FROM StockMovementEntity WHERE item_id = :itemId AND quantity > 0 ORDER BY id ASC", StockMovementEntity.class)
+            "FROM StockMovementEntity WHERE item_id = :itemId AND remainingQuantity > 0 ORDER BY remainingQuantity ASC", StockMovementEntity.class)
         .setParameter("itemId", itemId)
         .list();
     return existengStocks;

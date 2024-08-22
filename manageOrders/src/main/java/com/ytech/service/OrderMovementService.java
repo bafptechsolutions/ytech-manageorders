@@ -1,11 +1,9 @@
 package com.ytech.service;
 
 import com.ytech.model.OrderMovementEntity;
-import com.ytech.model.StockMovementEntity;
 import com.ytech.repository.OrderMovementRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.core.Response;
@@ -21,7 +19,6 @@ public class OrderMovementService {
 
   private final OrderMovementRepository orderMovementRepository;
   private final SessionFactory sessionFactory;
-
 
   public OrderMovementService(OrderMovementRepository orderMovementRepository, SessionFactory sessionFactory) {
     this.orderMovementRepository = orderMovementRepository;
@@ -54,25 +51,5 @@ public class OrderMovementService {
 
   public void save(Session session, OrderMovementEntity orderMovement) {
       orderMovementRepository.save(session, orderMovement);
-  }
-
-  public void processPendingOrders(StockMovementEntity stockMovement) {
-    System.out.println("a processar pedidos pendentes");
-    System.out.println(stockMovement.getId());
-    System.out.println(stockMovement.getItemId());
-    System.out.println(stockMovement.getQuantity());
-
-    OrderMovementEntity orderMovementEntity = new OrderMovementEntity();
-    orderMovementEntity.setOrderId(order.getId());
-    orderMovementEntity.setQuantityUsed(0);
-    orderMovementService.save(session, orderMovementEntity);
-
-    // procura por pedidos pendentes resp+eitante ao item que entrou
-
-    // para cada pedido pendente efetua o registo
-
-
-
-    // enviar email quando item for satisfeito
   }
 }

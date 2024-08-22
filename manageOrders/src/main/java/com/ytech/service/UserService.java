@@ -1,6 +1,5 @@
 package com.ytech.service;
 
-import com.ytech.model.OrderEntity;
 import com.ytech.model.UserEntity;
 import com.ytech.repository.UserRepository;
 import org.hibernate.Session;
@@ -11,7 +10,6 @@ import org.jvnet.hk2.annotations.Service;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Bruno Pinto

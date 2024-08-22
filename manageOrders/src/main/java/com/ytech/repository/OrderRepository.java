@@ -26,4 +26,12 @@ public class OrderRepository {
   public void delete(Session session, OrderEntity orderEntity) {
     session.delete(orderEntity);
   }
+
+  public List<OrderEntity> allPendingByItemId(Session session, Long itemId)  {
+    List<OrderEntity> existengStocks = session.createQuery(
+            "FROM OrderEntity WHERE item_id = :itemId AND status = 'Pending' ORDER BY id ASC", OrderEntity.class)
+        .setParameter("itemId", itemId)
+        .list();
+    return existengStocks;
+  }
 }

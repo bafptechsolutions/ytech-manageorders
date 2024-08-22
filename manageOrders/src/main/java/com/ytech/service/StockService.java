@@ -1,38 +1,28 @@
 package com.ytech.service;
 
-import com.ytech.model.ItemEntity;
 import com.ytech.model.StockMovementEntity;
 import com.ytech.repository.StockMovementRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.core.Response;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Bruno Pinto
  * @since 21/08/2024
  */
 @Service
-public class StockMovementService {
+public class StockService {
 
   private final StockMovementRepository stockMovementRepository;
   private final SessionFactory sessionFactory;
-  private final ProcessingOrdersService processingOrdersService;
 
-  public StockMovementService(StockMovementRepository stockMovementRepository, SessionFactory sessionFactory, ProcessingOrdersService processingOrdersService) {
+  public StockService(StockMovementRepository stockMovementRepository, SessionFactory sessionFactory) {
     this.stockMovementRepository = stockMovementRepository;
     this.sessionFactory = sessionFactory;
-    this.processingOrdersService = processingOrdersService;
   }
 
   public ServiceResponse<List<StockMovementEntity>> findAll() {
@@ -71,32 +61,13 @@ public class StockMovementService {
     }
   }
 
-  public ServiceResponse<StockMovementEntity> createStockMovement(StockMovementEntity stockMovement) {
-    Transaction transaction = null;
-    try (Session session = sessionFactory.openSession()) {
-      transaction = session.beginTransaction();
-      ItemEntity item = session.get(ItemEntity.class, stockMovement.getItemId());
-      if (item == null) {
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("itemId", "does not exist");
-        return new ServiceResponse<>(responseBody, Response.Status.NOT_FOUND);
-      }
-      Instant now = Instant.now();
-      LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
-      stockMovement.setCreationDate(localDateTime);
-      stockMovement.setRemainingQuantity(stockMovement.getQuantity());
-      stockMovementRepository.save(session, stockMovement);
-      transaction.commit();
-
-      CompletableFuture.runAsync(() -> {
-        processingOrdersService.processPendingOrders(stockMovement);
-      });
-      return new ServiceResponse<>(stockMovement, Response.Status.CREATED);
-    } catch (Exception e) {
-      if (transaction != null) {
-        transaction.rollback();
-      }
-      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
-    }
+  public boolean hasSufficientStock(Session session, Long itemId, int requiredQuantity) {
+    long totalStock = stockMovementRepository.getCurrentStockForItem(session, itemId);
+    return totalStock >= requiredQuantity;
   }
+
+  public List<StockMovementEntity> allExistingStocksByItemId(Session session, Long itemId) {
+    return stockMovementRepository.allExistingStocksByItemId(session, itemId);
+  }
+
 }

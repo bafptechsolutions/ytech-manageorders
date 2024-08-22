@@ -1,12 +1,12 @@
 package com.ytech.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -24,8 +24,8 @@ public class StockMovementEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Null(message = "CreationDate not allowed")
-  @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+  @Column(name = "creationdate", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime creationDate;
 
   @NotNull
@@ -37,8 +37,6 @@ public class StockMovementEntity implements Serializable {
   @Column(nullable = false)
   private int quantity;
 
-  @NotNull(message = "Quantity is required")
-  @Min(value = 1, message = "minimum value of 1")
   @Column(name = "remaining_quantity", nullable = false)
   private int remainingQuantity;
 
@@ -74,13 +72,11 @@ public class StockMovementEntity implements Serializable {
     this.itemId = itemId;
   }
 
-  @NotNull(message = "Quantity is required")
-  @Min(value = 1, message = "minimum value of 1")
   public int getRemainingQuantity() {
     return remainingQuantity;
   }
 
-  public void setRemainingQuantity(@NotNull(message = "Quantity is required") @Min(value = 1, message = "minimum value of 1") int remainingQuantity) {
+  public void setRemainingQuantity(int remainingQuantity) {
     this.remainingQuantity = remainingQuantity;
   }
 }

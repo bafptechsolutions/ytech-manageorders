@@ -2,7 +2,6 @@ package com.ytech.repository;
 
 import com.ytech.model.ItemEntity;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import java.util.List;
 

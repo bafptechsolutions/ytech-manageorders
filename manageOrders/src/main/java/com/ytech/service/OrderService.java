@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * @author Bruno Pinto
@@ -24,20 +23,14 @@ public class OrderService {
 
   private final OrderRepository orderRepository;
   private final SessionFactory sessionFactory;
-  private final StockMovementService stockMovementService;
-  private final ItemService itemService;
   private final UserService userService;
-  private final EmailService emailService;
-  private final OrderMovementService orderMovementService;
+  private final ProcessingOrdersService processingOrdersService;
 
-  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, StockMovementService stockMovementService, ItemService itemService, UserService userService, EmailService emailService, OrderMovementService orderMovementService) {
+  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, UserService userService, ProcessingOrdersService processingOrdersService) {
     this.orderRepository = orderRepository;
     this.sessionFactory = sessionFactory;
-    this.stockMovementService = stockMovementService;
-    this.itemService = itemService;
     this.userService = userService;
-    this.emailService = emailService;
-    this.orderMovementService = orderMovementService;
+    this.processingOrdersService = processingOrdersService;
   }
 
   public ServiceResponse<List<OrderEntity>> findAll() {
@@ -92,6 +85,8 @@ public class OrderService {
       if (order == null) {
         return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
+      /// eliminar caso ainda esteja no status pending
+
       orderRepository.delete(session, order);
       transaction.commit();
       return new ServiceResponse<>(Response.Status.NO_CONTENT);
@@ -100,67 +95,6 @@ public class OrderService {
         transaction.rollback();
       }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  public void processOrder(OrderEntity orderEntity, UserEntity userEntity) {
-    Transaction transaction = null;
-
-    try (Session session = sessionFactory.openSession()) {
-      transaction = session.beginTransaction();
-
-      if (stockMovementService.hasSufficientStock(session, orderEntity.getItemId(), orderEntity.getQuantity())) {
-        List<StockMovementEntity> stockMovements = stockMovementService.allExistingStocksByItemId(session, orderEntity.getItemId());
-
-        int accumulatedQuantity = 0;
-        for (StockMovementEntity stockMovementEntity : stockMovements) {
-          if (accumulatedQuantity >= orderEntity.getQuantity()) {
-            break;
-          }
-
-          int availableQuantity = stockMovementEntity.getRemainingQuantity();
-
-          OrderMovementEntity orderMovementEntity = new OrderMovementEntity();
-          orderMovementEntity.setOrderId(orderEntity.getId());
-          orderMovementEntity.setStockMovementId(stockMovementEntity.getId());
-
-          if (accumulatedQuantity + availableQuantity <= orderEntity.getQuantity()) {
-            // utilizar todo do mesmo registo
-            accumulatedQuantity += availableQuantity;
-            stockMovementEntity.setRemainingQuantity(availableQuantity - orderEntity.getQuantity());
-            orderMovementEntity.setQuantityUsed(orderEntity.getQuantity());
-          } else {
-            // ir utilizando de vários registos
-            int needed = orderEntity.getQuantity() - accumulatedQuantity;
-            accumulatedQuantity += needed;
-            stockMovementEntity.setRemainingQuantity(availableQuantity - needed);
-            orderMovementEntity.setQuantityUsed(needed);
-          }
-
-          session.update(stockMovementEntity);
-          orderMovementService.save(session, orderMovementEntity);
-        }
-
-        /*
-          Caso durante o processamento concorrente já não exista quantidade suficiente
-         */
-        if (accumulatedQuantity < orderEntity.getQuantity()) {
-          transaction.rollback();
-        } else {
-          orderEntity.setStatus("satisfied");
-          orderRepository.save(session, orderEntity);
-          transaction.commit();
-        }
-      }
-
-      CompletableFuture.runAsync(() -> {
-        emailService.sendOrderInformationToUser(orderEntity, userEntity);
-      });
-    } catch (Exception e) {
-      if (transaction != null) {
-        transaction.rollback();
-      }
-      e.printStackTrace();
     }
   }
 
@@ -189,8 +123,9 @@ public class OrderService {
       order.setStatus("Pending");
       orderRepository.save(session, order);
       transaction.commit();
+
       CompletableFuture.runAsync(() -> {
-        processOrder(order, user);
+        processingOrdersService.processOrder(order, user);
       });
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
@@ -201,6 +136,4 @@ public class OrderService {
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
-
-
 }

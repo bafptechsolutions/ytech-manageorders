@@ -1,7 +1,6 @@
 package com.ytech.service;
 
 import com.ytech.model.ItemEntity;
-import com.ytech.model.StockMovementEntity;
 import com.ytech.repository.ItemRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -104,15 +103,4 @@ public class ItemService {
          return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }
-
-   public boolean hasSufficientStock(Session session, Long itemId, int requiredQuantity) {
-      long totalStock = itemRepository.findById(session, itemId).getQuantityInStock();
-      return totalStock >= requiredQuantity;
-   }
-
-   public void updateStockQuantity(Session session, ItemEntity itemEntity, int quantity) {
-      itemEntity.setQuantityInStock(quantity);
-      itemRepository.save(session, itemEntity);
-   }
-
 }
