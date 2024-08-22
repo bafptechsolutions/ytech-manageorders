@@ -57,25 +57,25 @@ public class OrderService {
     }
   }
 
-  public ServiceResponse<OrderEntity> updateStatus(Long id, String status) {
-    Transaction transaction = null;
-    try (Session session = sessionFactory.openSession()) {
-      transaction = session.beginTransaction();
-      OrderEntity existingOrder = orderRepository.findById(session, id);
-      if (existingOrder == null) {
-        return new ServiceResponse<>(new OrderEntity(), Response.Status.NOT_FOUND);
-      }
-      existingOrder.setStatus(status);
-      orderRepository.save(session, existingOrder);
-      transaction.commit();
-      return new ServiceResponse<>(Response.Status.NO_CONTENT);
-    } catch (Exception e) {
-      if (transaction != null) {
-        transaction.rollback();
-      }
-      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
-    }
-  }
+//  public ServiceResponse<OrderEntity> updateStatus(Long id, String status) {
+//    Transaction transaction = null;
+//    try (Session session = sessionFactory.openSession()) {
+//      transaction = session.beginTransaction();
+//      OrderEntity existingOrder = orderRepository.findById(session, id);
+//      if (existingOrder == null) {
+//        return new ServiceResponse<>(new OrderEntity(), Response.Status.NOT_FOUND);
+//      }
+//      existingOrder.setStatus(status);
+//      orderRepository.save(session, existingOrder);
+//      transaction.commit();
+//      return new ServiceResponse<>(Response.Status.NO_CONTENT);
+//    } catch (Exception e) {
+//      if (transaction != null) {
+//        transaction.rollback();
+//      }
+//      return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
+//    }
+//  }
 
   public ServiceResponse<Void> delete(Long id) {
     Transaction transaction = null;
@@ -85,8 +85,9 @@ public class OrderService {
       if (order == null) {
         return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
-      /// eliminar caso ainda esteja no status pending
-
+      if (!Objects.equals(order.getStatus(), "Pending")) {
+        return new ServiceResponse<>("only allows you to delete the order if it is in pending status", Response.Status.BAD_REQUEST);
+      }
       orderRepository.delete(session, order);
       transaction.commit();
       return new ServiceResponse<>(Response.Status.NO_CONTENT);

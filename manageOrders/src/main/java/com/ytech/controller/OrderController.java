@@ -51,10 +51,10 @@ public class OrderController {
   }
 
   @DELETE
-  @Path("/{id}/cancel")
+  @Path("/{id}/")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response cancelOrder(@PathParam("id") Long id) {
-    ServiceResponse<OrderEntity> response = orderService.updateStatus(id, "cancelled");
-    return Response.status(response.getStatus()).entity(response.getBody()).build();
+  public Response deleteOrder(@PathParam("id") Long id) {
+    ServiceResponse<Void> response = orderService.delete(id);
+    return Response.status(response.getStatus()).build();
   }
 }
