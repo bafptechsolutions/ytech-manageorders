@@ -20,10 +20,12 @@ public class ItemService {
 
    private final ItemRepository itemRepository;
    private final SessionFactory sessionFactory;
+   private final StockMovementService stockMovementService;
 
-   public ItemService(ItemRepository itemRepository, SessionFactory sessionFactory) {
+   public ItemService(ItemRepository itemRepository, SessionFactory sessionFactory, StockMovementService stockMovementService) {
       this.itemRepository = itemRepository;
       this.sessionFactory = sessionFactory;
+     this.stockMovementService = stockMovementService;
    }
 
    public ServiceResponse<List<ItemEntity>> findAll() {
@@ -92,6 +94,9 @@ public class ItemService {
          ItemEntity item = itemRepository.findById(session, id);
          if (item == null) {
             return new ServiceResponse<>(Response.Status.NOT_FOUND);
+         }
+         if (stockMovementService.existsStockMovementItem(session, id)){
+            return new ServiceResponse<>("You can only delete items that have never been moved in stock", Response.Status.BAD_REQUEST);
          }
          itemRepository.delete(session, item);
          transaction.commit();

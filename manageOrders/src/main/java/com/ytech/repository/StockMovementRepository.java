@@ -44,4 +44,11 @@ public class StockMovementRepository {
         .list();
     return existengStocks;
   }
+
+  public Long existsStockMovementItem(Session session, Long itemId) {
+    return session.createQuery(
+            "SELECT COUNT(id) FROM StockMovementEntity WHERE item_id = :itemId", Long.class)
+        .setParameter("itemId", itemId)
+        .uniqueResult();
+  }
 }

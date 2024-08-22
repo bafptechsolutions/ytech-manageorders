@@ -1,6 +1,7 @@
 package com.ytech.service;
 
 import com.ytech.model.ItemEntity;
+import com.ytech.model.OrderMovementEntity;
 import com.ytech.model.StockMovementEntity;
 import com.ytech.repository.StockMovementRepository;
 import org.hibernate.Session;
@@ -97,6 +98,16 @@ public class StockMovementService {
         transaction.rollback();
       }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  public Boolean existsStockMovementItem(Session session, Long id) {
+    try {
+      Long total = stockMovementRepository.existsStockMovementItem(session, id);
+      return total > 0;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return true;
     }
   }
 }
