@@ -57,7 +57,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"tapete\"\r\n}",
+							"raw": "{\r\n    \"name\": \"MIC\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -211,7 +211,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"vitor\",\r\n    \"email\": \"miguel@teste.com\"\r\n}",
+							"raw": "{\r\n    \"name\": \"paulo\",\r\n    \"email\": \"paulo@teste.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -611,7 +611,7 @@
 	"variable": [
 		{
 			"key": "YtechManageOrders",
-			"value": "http://localhost:8080/api",
+			"value": "http://localhost:8704/api",
 			"type": "string"
 		}
 	]

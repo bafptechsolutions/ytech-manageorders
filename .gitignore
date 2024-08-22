@@ -2,7 +2,6 @@
 *.class
 
 # Log file
-*.log
 
 # BlueJ files
 *.ctxt
@@ -11,7 +10,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
@@ -23,17 +21,8 @@
 hs_err_pid*
 replay_pid*
 
-# respeitante às bases de dados
-data/*
-
-
-
 #### ************************************************************
 manageOrders/.gradle
-manageOrders/build/
-manageOrders/!gradle/wrapper/gradle-wrapper.jar
-manageOrders/!**/src/main/**/build/
-manageOrders/!**/src/test/**/build/
 
 ### IntelliJ IDEA ###
 manageOrders/.idea/modules.xml
@@ -47,28 +36,4 @@ manageOrders/out/
 manageOrders/!**/src/main/**/out/
 manageOrders/!**/src/test/**/out/
 
-### Eclipse ###
-manageOrders/.apt_generated
-manageOrders/.classpath
-manageOrders/.factorypath
-manageOrders/.project
-manageOrders/.settings
-manageOrders/.springBeans
-manageOrders/.sts4-cache
-manageOrders/bin/
-manageOrders/!**/src/main/**/bin/
-manageOrders/!**/src/test/**/bin/
-
-### NetBeans ###
-manageOrders/nbproject/private/
-manageOrders/nbbuild/
-manageOrders/dist/
-manageOrders/nbdist/
-manageOrders/.nb-gradle/
-
-### VS Code ###
-manageOrders/.vscode/
-
-### Mac OS ###
-manageOrders/.DS_Store
 
