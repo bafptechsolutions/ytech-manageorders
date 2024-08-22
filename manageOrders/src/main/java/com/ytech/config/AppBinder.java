@@ -21,19 +21,21 @@ public class AppBinder extends AbstractBinder {
     OrderMovementRepository orderMovementRepository = new OrderMovementRepository();
     StockMovementRepository stockMovementRepository = new StockMovementRepository();
     UserRepository userRepository = new UserRepository();
+
+    LoggerService loggerService = new LoggerService();
+
     TraceService traceService = new TraceService(sessionFactory, orderRepository, userRepository, itemRepository, orderMovementRepository, stockMovementRepository);
 
     EmailService emailService = new EmailService();
     OrderMovementService orderMovementService = new OrderMovementService(orderMovementRepository, sessionFactory);
-    UserService userService = new UserService(userRepository, sessionFactory);
+    UserService userService = new UserService(userRepository, sessionFactory, orderRepository, itemRepository);
     StockService stockService = new StockService(stockMovementRepository, sessionFactory);
-    ProcessingOrdersService processingOrdersService = new ProcessingOrdersService(orderRepository, sessionFactory, stockService, emailService, orderMovementService, userService, stockMovementRepository);
-    StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory, processingOrdersService);
+    ProcessingOrdersService processingOrdersService = new ProcessingOrdersService(orderRepository, sessionFactory, stockService, emailService, orderMovementService, userService, stockMovementRepository, loggerService);
+    StockMovementService stockMovementService = new StockMovementService(stockMovementRepository, sessionFactory, processingOrdersService, loggerService, itemRepository);
     ItemService itemService = new ItemService(itemRepository, sessionFactory, stockMovementService);
-    OrderService orderService = new OrderService(orderRepository, sessionFactory, userService, processingOrdersService);
+    OrderService orderService = new OrderService(orderRepository, sessionFactory, userService, processingOrdersService, itemRepository);
 
-
-
+    bind(loggerService).to(LoggerService.class);
     bind(emailService).to(EmailService.class);
     bind(itemService).to(ItemService.class);
     bind(processingOrdersService).to(ProcessingOrdersService.class);

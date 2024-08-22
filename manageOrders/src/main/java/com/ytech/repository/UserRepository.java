@@ -35,4 +35,21 @@ public class UserRepository {
     Long count = query.uniqueResult();
     return count != null && count > 0;
   }
+
+  public boolean userExistsByName(Session session, String name) {
+    Query<Long> query = session.createQuery(
+        "SELECT COUNT(id) FROM UserEntity WHERE name = :name", Long.class);
+    query.setMaxResults(1);
+    query.setParameter("name", name);
+    Long count = query.uniqueResult();
+    return count != null && count > 0;
+  }
+  public boolean userExistsByEmail(Session session, String email) {
+    Query<Long> query = session.createQuery(
+        "SELECT COUNT(id) FROM UserEntity WHERE email = :email", Long.class);
+    query.setMaxResults(1);
+    query.setParameter("email", email);
+    Long count = query.uniqueResult();
+    return count != null && count > 0;
+  }
 }

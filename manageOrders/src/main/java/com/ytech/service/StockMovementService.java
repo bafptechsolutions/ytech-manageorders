@@ -1,7 +1,11 @@
 package com.ytech.service;
 
+import com.ytech.dto.OrderDto;
+import com.ytech.dto.StockMovementDto;
 import com.ytech.model.ItemEntity;
+import com.ytech.model.OrderEntity;
 import com.ytech.model.StockMovementEntity;
+import com.ytech.repository.ItemRepository;
 import com.ytech.repository.StockMovementRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,14 +32,18 @@ public class StockMovementService {
   private final StockMovementRepository stockMovementRepository;
   private final SessionFactory sessionFactory;
   private final ProcessingOrdersService processingOrdersService;
+  private final LoggerService loggerService;
+  private final ItemRepository itemRepository;
 
-  public StockMovementService(StockMovementRepository stockMovementRepository, SessionFactory sessionFactory, ProcessingOrdersService processingOrdersService) {
+  public StockMovementService(StockMovementRepository stockMovementRepository, SessionFactory sessionFactory, ProcessingOrdersService processingOrdersService, LoggerService loggerService, ItemRepository itemRepository) {
     this.stockMovementRepository = stockMovementRepository;
     this.sessionFactory = sessionFactory;
     this.processingOrdersService = processingOrdersService;
+    this.loggerService = loggerService;
+    this.itemRepository = itemRepository;
   }
 
-  public ServiceResponse<List<StockMovementEntity>> findAll() {
+  public ServiceResponse<List<StockMovementDto>> findAll() {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
@@ -43,7 +51,18 @@ public class StockMovementService {
       if (stockMovements.isEmpty()) {
         return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);
       }
-      return new ServiceResponse<>(stockMovements, Response.Status.OK);
+      List<StockMovementDto> stockMovementDtos = new ArrayList<>();
+      for (StockMovementEntity stockMovementEntity : stockMovements) {
+        ItemEntity itemEntity = itemRepository.findById(session, stockMovementEntity.getItemId());
+        StockMovementDto stockMovementDto = new StockMovementDto();
+        stockMovementDto.setId(stockMovementEntity.getId());
+        stockMovementDto.setCreationDate(stockMovementEntity.getCreationDate());
+        stockMovementDto.setQuantity(stockMovementEntity.getQuantity());
+        stockMovementDto.setRemainingQuantity(stockMovementEntity.getRemainingQuantity());
+        stockMovementDto.setItem(itemEntity);
+        stockMovementDtos.add(stockMovementDto);
+      }
+      return new ServiceResponse<>(stockMovementDtos, Response.Status.OK);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
@@ -69,15 +88,23 @@ public class StockMovementService {
     }
   }
 
-  public ServiceResponse<StockMovementEntity> findById(Long id) {
+  public ServiceResponse<StockMovementDto> findById(Long id) {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
       StockMovementEntity stockMovement = stockMovementRepository.findById(session, id);
       if (stockMovement == null) {
-        return new ServiceResponse<>(new StockMovementEntity(), Response.Status.NOT_FOUND);
+        return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
-      return new ServiceResponse<>(stockMovement, Response.Status.OK);
+      ItemEntity itemEntity = itemRepository.findById(session, stockMovement.getItemId());
+      StockMovementDto stockMovementDto = new StockMovementDto();
+      stockMovementDto.setId(stockMovement.getId());
+      stockMovementDto.setCreationDate(stockMovement.getCreationDate());
+      stockMovementDto.setQuantity(stockMovement.getQuantity());
+      stockMovementDto.setRemainingQuantity(stockMovement.getRemainingQuantity());
+      stockMovementDto.setItem(itemEntity);
+
+      return new ServiceResponse<>(stockMovementDto, Response.Status.OK);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
@@ -120,7 +147,7 @@ public class StockMovementService {
       Long total = stockMovementRepository.existsStockMovementItem(session, id);
       return total > 0;
     } catch (Exception e) {
-      e.printStackTrace();
+      loggerService.logError(e);
       return true;
     }
   }

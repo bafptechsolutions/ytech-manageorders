@@ -1,13 +1,18 @@
 package com.ytech.controller;
 
+import com.ytech.dto.OrderDto;
+import com.ytech.model.OrderEntity;
+import com.ytech.service.LoggerService;
 import com.ytech.model.UserEntity;
 import com.ytech.service.ServiceResponse;
 import com.ytech.service.UserService;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -21,16 +26,22 @@ import java.util.List;
 public class UserController {
 
   private final UserService userService;
+  private final LoggerService loggerService;
+
+  @Context
+  private HttpServletRequest httpRequest;
 
   @Inject
-  public UserController(UserService userService) {
+  public UserController(UserService userService, LoggerService loggerService) {
     this.userService = userService;
+    this.loggerService = loggerService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Response users() {
     ServiceResponse<List<UserEntity>> response = userService.findAll();
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -39,6 +50,7 @@ public class UserController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getUserById(@PathParam("id") Long id) {
     ServiceResponse<UserEntity> response = userService.findById(id);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -46,7 +58,8 @@ public class UserController {
   @Path("/{id}/orders")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getAllUserOrdersById(@PathParam("id") Long id) {
-    ServiceResponse<UserEntity> response = userService.findAllOrdersById(id);
+    ServiceResponse<List<OrderDto>> response = userService.findAllOrdersById(id);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -55,6 +68,7 @@ public class UserController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response createUser(@Valid UserEntity user) {
     ServiceResponse<UserEntity> response = userService.create(user);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -64,6 +78,7 @@ public class UserController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response updateUser(@PathParam("id") Long id, UserEntity user) {
     ServiceResponse<UserEntity> response = userService.update(id, user);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -72,6 +87,7 @@ public class UserController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response deleteUser(@PathParam("id") Long id) {
     ServiceResponse<Void> response = userService.delete(id);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).build();
   }
 }

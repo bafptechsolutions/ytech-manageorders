@@ -1,5 +1,7 @@
 package com.ytech.controller;
 
+import com.ytech.dto.OrderDto;
+import com.ytech.service.LoggerService;
 import com.ytech.dto.TraceOrderDto;
 import com.ytech.model.OrderEntity;
 import com.ytech.service.OrderService;
@@ -8,8 +10,10 @@ import com.ytech.service.TraceService;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -24,17 +28,23 @@ public class OrderController {
 
   private final OrderService orderService;
   private final TraceService traceService;
+  private final LoggerService loggerService;
 
   @Inject
-  public OrderController(OrderService orderService, TraceService traceService) {
+  public OrderController(OrderService orderService, TraceService traceService, LoggerService loggerService) {
     this.orderService = orderService;
     this.traceService = traceService;
+    this.loggerService = loggerService;
   }
+
+  @Context
+  private HttpServletRequest httpRequest;
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Response orders() {
-    ServiceResponse<List<OrderEntity>> response = orderService.findAll();
+    ServiceResponse<List<OrderDto>> response = orderService.findAll();
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -42,7 +52,8 @@ public class OrderController {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getOrderById(@PathParam("id") Long id) {
-    ServiceResponse<OrderEntity> response = orderService.findById(id);
+    ServiceResponse<OrderDto> response = orderService.findById(id);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -51,6 +62,7 @@ public class OrderController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response createOrder(@Valid OrderEntity order) {
     ServiceResponse<OrderEntity> response = orderService.createOrder(order);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
@@ -59,7 +71,8 @@ public class OrderController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response deleteOrder(@PathParam("id") Long id) {
     ServiceResponse<Void> response = orderService.delete(id);
-    return Response.status(response.getStatus()).build();
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
+    return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 
   @GET
@@ -67,6 +80,7 @@ public class OrderController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getTraceStockMovementById(@PathParam("id") Long id) {
     ServiceResponse<TraceOrderDto> response = traceService.traceOrderMovementById(id);
+    loggerService.logResponse(httpRequest, response.getStatus(), response);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 }

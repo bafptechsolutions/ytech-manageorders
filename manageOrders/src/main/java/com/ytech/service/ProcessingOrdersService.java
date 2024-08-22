@@ -28,8 +28,9 @@ public class ProcessingOrdersService {
   private final OrderMovementService orderMovementService;
   private final UserService userService;
   private final StockMovementRepository stockMovementRepository;
+  private final LoggerService loggerService;
 
-  public ProcessingOrdersService(OrderRepository orderRepository, SessionFactory sessionFactory, StockService stockService, EmailService emailService, OrderMovementService orderMovementService, UserService userService, StockMovementRepository stockMovementRepository) {
+  public ProcessingOrdersService(OrderRepository orderRepository, SessionFactory sessionFactory, StockService stockService, EmailService emailService, OrderMovementService orderMovementService, UserService userService, StockMovementRepository stockMovementRepository, LoggerService loggerService) {
     this.orderRepository = orderRepository;
     this.sessionFactory = sessionFactory;
     this.stockService = stockService;
@@ -37,6 +38,7 @@ public class ProcessingOrdersService {
     this.orderMovementService = orderMovementService;
     this.userService = userService;
     this.stockMovementRepository = stockMovementRepository;
+    this.loggerService = loggerService;
   }
 
   public boolean processOrder(OrderEntity orderEntity, UserEntity userEntity) {
@@ -96,7 +98,7 @@ public class ProcessingOrdersService {
       if (transaction != null) {
         transaction.rollback();
       }
-      e.printStackTrace();
+      loggerService.logError(e);
     }
     return true;
   }
@@ -118,10 +120,7 @@ public class ProcessingOrdersService {
         if (transaction != null) {
           transaction.rollback();
         }
-        e.printStackTrace();
+        loggerService.logError(e);
       }
-
-
   }
-
 }

@@ -1,6 +1,8 @@
 package com.ytech.service;
 
+import com.ytech.dto.OrderDto;
 import com.ytech.model.*;
+import com.ytech.repository.ItemRepository;
 import com.ytech.repository.OrderRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,15 +27,17 @@ public class OrderService {
   private final SessionFactory sessionFactory;
   private final UserService userService;
   private final ProcessingOrdersService processingOrdersService;
+  private final ItemRepository itemRepository;
 
-  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, UserService userService, ProcessingOrdersService processingOrdersService) {
+  public OrderService(OrderRepository orderRepository, SessionFactory sessionFactory, UserService userService, ProcessingOrdersService processingOrdersService, ItemRepository itemRepository) {
     this.orderRepository = orderRepository;
     this.sessionFactory = sessionFactory;
     this.userService = userService;
     this.processingOrdersService = processingOrdersService;
+    this.itemRepository = itemRepository;
   }
 
-  public ServiceResponse<List<OrderEntity>> findAll() {
+  public ServiceResponse<List<OrderDto>> findAll() {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
@@ -41,7 +45,18 @@ public class OrderService {
       if (orders.isEmpty()) {
         return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);
       }
-      return new ServiceResponse<>(orders, Response.Status.OK);
+      List<OrderDto> orderDtos = new ArrayList<>();
+      for (OrderEntity orderEntity : orders) {
+        ItemEntity itemEntity = itemRepository.findById(session, orderEntity.getItemId());
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(orderEntity.getId());
+        orderDto.setCreationDate(orderEntity.getCreationDate());
+        orderDto.setStatus(orderEntity.getStatus());
+        orderDto.setQuantity(orderEntity.getQuantity());
+        orderDto.setItem(itemEntity);
+        orderDtos.add(orderDto);
+      }
+      return new ServiceResponse<>(orderDtos, Response.Status.OK);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
@@ -50,15 +65,23 @@ public class OrderService {
     }
   }
 
-  public ServiceResponse<OrderEntity> findById(Long id) {
+  public ServiceResponse<OrderDto> findById(Long id) {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
-      OrderEntity order = orderRepository.findById(session, id);
-      if (order == null) {
-        return new ServiceResponse<>(new OrderEntity(), Response.Status.NOT_FOUND);
+      OrderEntity orderEntity = orderRepository.findById(session, id);
+      if (orderEntity == null) {
+        return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
-      return new ServiceResponse<>(order, Response.Status.OK);
+      ItemEntity itemEntity = itemRepository.findById(session, orderEntity.getItemId());
+      OrderDto orderDto = new OrderDto();
+      orderDto.setId(orderEntity.getId());
+      orderDto.setCreationDate(orderEntity.getCreationDate());
+      orderDto.setStatus(orderEntity.getStatus());
+      orderDto.setQuantity(orderEntity.getQuantity());
+      orderDto.setItem(itemEntity);
+
+      return new ServiceResponse<>(orderDto, Response.Status.OK);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
@@ -120,7 +143,6 @@ public class OrderService {
       });
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
-      System.out.println(e);
       if (transaction != null) {
         transaction.rollback();
       }

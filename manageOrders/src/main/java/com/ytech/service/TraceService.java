@@ -83,13 +83,10 @@ public class TraceService {
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
 
-      System.out.println("---------------------------------------- 01");
       StockMovementEntity stockMovementEntity = stockMovementRepository.findById(session, stockMovementId);
-      System.out.println("---------------------------------------- 02");
       if (stockMovementEntity == null) {
         return new ServiceResponse<>(Response.Status.NOT_FOUND);
       }
-      System.out.println("---------------------------------------- 03");
 
       TraceStockMovementDto traceStockMovementDto = new TraceStockMovementDto();
       traceStockMovementDto.setId(stockMovementEntity.getId());

@@ -1,6 +1,13 @@
 package com.ytech.service;
 
+import com.ytech.dto.OrderDto;
+import com.ytech.dto.TraceOrderDto;
+import com.ytech.model.ItemEntity;
+import com.ytech.model.OrderEntity;
+import com.ytech.model.StockMovementEntity;
 import com.ytech.model.UserEntity;
+import com.ytech.repository.ItemRepository;
+import com.ytech.repository.OrderRepository;
 import com.ytech.repository.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,10 +27,14 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final SessionFactory sessionFactory;
+  private final OrderRepository orderRepository;
+  private final ItemRepository itemRepository;
 
-  public UserService(UserRepository userRepository, SessionFactory sessionFactory) {
+  public UserService(UserRepository userRepository, SessionFactory sessionFactory, OrderRepository orderRepository, ItemRepository itemRepository) {
     this.userRepository = userRepository;
     this.sessionFactory = sessionFactory;
+    this.orderRepository = orderRepository;
+    this.itemRepository = itemRepository;
   }
 
   public ServiceResponse<List<UserEntity>> findAll() {
@@ -64,15 +75,30 @@ public class UserService {
     return userRepository.findById(session, id);
   }
 
-  public ServiceResponse<UserEntity> findAllOrdersById(Long id) {
+  public ServiceResponse<List<OrderDto>> findAllOrdersById(Long id) {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
       UserEntity user = userRepository.findById(session, id);
       if (user == null) {
-        return new ServiceResponse<>(new UserEntity(), Response.Status.NOT_FOUND);
+        return new ServiceResponse<>("user not found", Response.Status.NOT_FOUND);
       }
-      return new ServiceResponse<>(user, Response.Status.OK);
+      List<OrderEntity> orders = orderRepository.findAllByUserId(session, user.getId());
+      if (orders.isEmpty()) {
+        return new ServiceResponse<>(Response.Status.NOT_FOUND);
+      }
+      List<OrderDto> orderDtos = new ArrayList<>();
+      for (OrderEntity orderEntity : orders) {
+        ItemEntity itemEntity = itemRepository.findById(session, orderEntity.getItemId());
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(orderEntity.getId());
+        orderDto.setCreationDate(orderEntity.getCreationDate());
+        orderDto.setStatus(orderEntity.getStatus());
+        orderDto.setQuantity(orderEntity.getQuantity());
+        orderDto.setItem(itemEntity);
+        orderDtos.add(orderDto);
+      }
+      return new ServiceResponse<>(orderDtos, Response.Status.OK);
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
@@ -85,6 +111,12 @@ public class UserService {
     Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
       transaction = session.beginTransaction();
+      if (userRepository.userExistsByName(session, user.getName())) {
+        return new ServiceResponse<>("name already registered", Response.Status.BAD_REQUEST);
+      }
+      if (userRepository.userExistsByEmail(session, user.getEmail())) {
+        return new ServiceResponse<>("email already registered", Response.Status.BAD_REQUEST);
+      }
       userRepository.save(session, user);
       transaction.commit();
       return new ServiceResponse<>(user, Response.Status.CREATED);
