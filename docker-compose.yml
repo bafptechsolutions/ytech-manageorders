@@ -1,0 +1,76 @@
+name: ytech
+services:
+  ytech-postgres:
+    container_name: "ytech_postgres"
+    image: postgres:16.4-alpine
+    restart: always
+    hostname: "postgres.ytech.localhost.local"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - 8702:5432
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./tlscerts:/var/lib/postgresql/certs
+    extra_hosts:
+      - "manageOrders.ytech.localhost.local:host-gateway"      
+    networks:
+      ytech_projects_network:
+        aliases:
+          - postgres.ytech.localhost.local
+
+  ytech-pgadmin:    
+    container_name: "ytech_pgadmin"
+    image: dpage/pgadmin4:8.10
+    hostname: "pgadmin.ytech.localhost.local"
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_ENABLE_TLS: 1
+      PGADMIN_LISTEN_PORT: 443
+    ports:
+      - 8703:443
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+      - ./tlscerts:/certs
+    networks:
+      ytech_projects_network:
+        aliases:
+          - pgadmin.ytech.localhost.local
+
+  ytech-manageOrders:
+    container_name: "ytech_manageOrders"
+    image: openjdk:8-jdk-alpine
+    hostname: "manageOrders.ytech.localhost.local"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    ports:
+      - "8704:8080"
+    volumes:
+      - ./tlscerts:/var/opt/ssl
+      - ./manageOrders/build/libs/manageOrders.jar:/app/app.jar
+    entrypoint: "java -Xms512m -Xmx1g -jar /app/app.jar"
+    extra_hosts:
+      - "postgres.ytech.localhost.local:host-gateway"
+      - "pgadmin.ytech.localhost.local:host-gateway"
+    networks:
+      ytech_projects_network:
+        aliases:
+          - manageOrders.ytech.localhost.local    
+
+networks:
+  ytech_projects_network:
+    name: ytech_projects_network
+    external: true 
