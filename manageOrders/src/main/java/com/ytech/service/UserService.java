@@ -27,41 +27,56 @@ public class UserService {
   }
 
   public ServiceResponse<List<UserEntity>> findAll() {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       List<UserEntity> users = userRepository.findAll(session);
       if (users.isEmpty()) {
         return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(users, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
   public ServiceResponse<UserEntity> findById(Long id) {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       UserEntity user = userRepository.findById(session, id);
       if (user == null) {
         return new ServiceResponse<>(new UserEntity(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(user, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
   public UserEntity findById(Session session, Long id) {
-      return userRepository.findById(session, id);
+    return userRepository.findById(session, id);
   }
 
   public ServiceResponse<UserEntity> findAllOrdersById(Long id) {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       UserEntity user = userRepository.findById(session, id);
       if (user == null) {
         return new ServiceResponse<>(new UserEntity(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(user, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }

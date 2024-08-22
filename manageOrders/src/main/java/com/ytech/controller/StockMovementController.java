@@ -1,8 +1,11 @@
 package com.ytech.controller;
 
+import com.ytech.dto.TraceOrderDto;
+import com.ytech.dto.TraceStockMovementDto;
 import com.ytech.model.StockMovementEntity;
 import com.ytech.service.ServiceResponse;
 import com.ytech.service.StockMovementService;
+import com.ytech.service.TraceService;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
@@ -11,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Bruno Pinto
@@ -21,10 +25,12 @@ import java.util.List;
 public class StockMovementController {
 
   private final StockMovementService stockMovementService;
+  private final TraceService traceService;
 
   @Inject
-  public StockMovementController(StockMovementService stockMovementService) {
+  public StockMovementController(StockMovementService stockMovementService, TraceService traceService) {
     this.stockMovementService = stockMovementService;
+    this.traceService = traceService;
   }
 
   @GET
@@ -55,6 +61,14 @@ public class StockMovementController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response createOrder(@Valid StockMovementEntity stockMovementEntity) {
     ServiceResponse<StockMovementEntity> response = stockMovementService.createStockMovement(stockMovementEntity);
+    return Response.status(response.getStatus()).entity(response.getBody()).build();
+  }
+
+  @GET
+  @Path("/{id}/trace")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getTraceStockMovementById(@PathParam("id") Long id) {
+    ServiceResponse<TraceStockMovementDto> response = traceService.traceStockMovementById(id);
     return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 

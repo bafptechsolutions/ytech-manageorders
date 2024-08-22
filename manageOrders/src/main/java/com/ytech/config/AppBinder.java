@@ -1,6 +1,6 @@
 package com.ytech.config;
 
-import com.ytech.controller.ItemController;
+import com.ytech.controller.*;
 import com.ytech.repository.*;
 import com.ytech.service.*;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -21,6 +21,7 @@ public class AppBinder extends AbstractBinder {
     OrderMovementRepository orderMovementRepository = new OrderMovementRepository();
     StockMovementRepository stockMovementRepository = new StockMovementRepository();
     UserRepository userRepository = new UserRepository();
+    TraceService traceService = new TraceService(sessionFactory, orderRepository, userRepository, itemRepository, orderMovementRepository, stockMovementRepository);
 
     EmailService emailService = new EmailService();
     OrderMovementService orderMovementService = new OrderMovementService(orderMovementRepository, sessionFactory);
@@ -31,6 +32,8 @@ public class AppBinder extends AbstractBinder {
     ItemService itemService = new ItemService(itemRepository, sessionFactory, stockMovementService);
     OrderService orderService = new OrderService(orderRepository, sessionFactory, userService, processingOrdersService);
 
+
+
     bind(emailService).to(EmailService.class);
     bind(itemService).to(ItemService.class);
     bind(processingOrdersService).to(ProcessingOrdersService.class);
@@ -39,13 +42,13 @@ public class AppBinder extends AbstractBinder {
     bind(orderMovementService).to(OrderMovementService.class);
     bind(stockMovementService).to(StockMovementService.class);
     bind(userService).to(UserService.class);
+    bind(traceService).to(TraceService.class);
 
     // Para vincular os controladores ao container do HK2, por estarem indicados como @Service
     bind(ItemController.class).to(ItemController.class);
-//    bind(itemService).to(ItemService.class);
-//    bind(orderService).to(OrderService.class);
-//    bind(orderMovementService).to(OrderMovementService.class);
-//    bind(stockMovementService).to(StockMovementService.class);
-//    bind(userService).to(UserService.class);
+    bind(OrderController.class).to(OrderController.class);
+    bind(OrderMovementController.class).to(OrderMovementController.class);
+    bind(StockMovementController.class).to(StockMovementController.class);
+    bind(UserController.class).to(UserController.class);
   }
 }

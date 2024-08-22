@@ -29,25 +29,35 @@ public class ItemService {
    }
 
    public ServiceResponse<List<ItemEntity>> findAll() {
+      Transaction transaction = null;
       try (Session session = sessionFactory.openSession()) {
+         transaction = session.beginTransaction();
          List<ItemEntity> items = itemRepository.findAll(session);
          if (items.isEmpty()) {
             return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);
          }
          return new ServiceResponse<>(items, Response.Status.OK);
       } catch (Exception e) {
+         if (transaction != null) {
+            transaction.rollback();
+         }
          return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }
 
    public ServiceResponse<ItemEntity> findById(Long id) {
+      Transaction transaction = null;
       try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
          ItemEntity item = itemRepository.findById(session, id);
          if (item == null) {
             return new ServiceResponse<>(new ItemEntity(), Response.Status.NOT_FOUND);
          }
          return new ServiceResponse<>(item, Response.Status.OK);
       } catch (Exception e) {
+         if (transaction != null) {
+            transaction.rollback();
+         }
          return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
       }
    }

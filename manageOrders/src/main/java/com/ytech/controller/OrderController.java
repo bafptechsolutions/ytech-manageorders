@@ -1,8 +1,10 @@
 package com.ytech.controller;
 
+import com.ytech.dto.TraceOrderDto;
 import com.ytech.model.OrderEntity;
 import com.ytech.service.OrderService;
 import com.ytech.service.ServiceResponse;
+import com.ytech.service.TraceService;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
@@ -21,10 +23,12 @@ import java.util.List;
 public class OrderController {
 
   private final OrderService orderService;
+  private final TraceService traceService;
 
   @Inject
-  public OrderController(OrderService orderService) {
+  public OrderController(OrderService orderService, TraceService traceService) {
     this.orderService = orderService;
+    this.traceService = traceService;
   }
 
   @GET
@@ -56,5 +60,13 @@ public class OrderController {
   public Response deleteOrder(@PathParam("id") Long id) {
     ServiceResponse<Void> response = orderService.delete(id);
     return Response.status(response.getStatus()).build();
+  }
+
+  @GET
+  @Path("/{id}/trace")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getTraceStockMovementById(@PathParam("id") Long id) {
+    ServiceResponse<TraceOrderDto> response = traceService.traceOrderMovementById(id);
+    return Response.status(response.getStatus()).entity(response.getBody()).build();
   }
 }

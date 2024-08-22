@@ -51,4 +51,11 @@ public class StockMovementRepository {
         .setParameter("itemId", itemId)
         .uniqueResult();
   }
+
+  public List<StockMovementEntity> getAllByArrayIds(Session session, List<Long> ids) {
+    return session.createQuery(
+            "FROM StockMovementEntity WHERE id IN :ids", StockMovementEntity.class)
+        .setParameter("ids", ids)
+        .list();
+  }
 }

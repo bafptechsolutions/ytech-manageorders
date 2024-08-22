@@ -18,7 +18,7 @@ public class ServiceResponse<T> {
   }
 
   public ServiceResponse(Response.Status status) {
-    this.body = null;
+    this.body = (T) "";
     this.status = status;
   }
 
@@ -35,8 +35,6 @@ public class ServiceResponse<T> {
     this.body = (T) responseBody;
     this.status = status;
   }
-
-
 
   public T getBody() {
     return body;

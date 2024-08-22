@@ -34,25 +34,35 @@ public class OrderService {
   }
 
   public ServiceResponse<List<OrderEntity>> findAll() {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       List<OrderEntity> orders = orderRepository.findAll(session);
       if (orders.isEmpty()) {
         return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(orders, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
   public ServiceResponse<OrderEntity> findById(Long id) {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       OrderEntity order = orderRepository.findById(session, id);
       if (order == null) {
         return new ServiceResponse<>(new OrderEntity(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(order, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }

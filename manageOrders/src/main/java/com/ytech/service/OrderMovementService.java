@@ -4,6 +4,7 @@ import com.ytech.model.OrderMovementEntity;
 import com.ytech.repository.OrderMovementRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.ws.rs.core.Response;
@@ -26,25 +27,35 @@ public class OrderMovementService {
   }
 
   public ServiceResponse<List<OrderMovementEntity>> findAll() {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       List<OrderMovementEntity> orderMovements = orderMovementRepository.findAll(session);
       if (orderMovements.isEmpty()) {
         return new ServiceResponse<>(new ArrayList<>(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(orderMovements, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
   public ServiceResponse<OrderMovementEntity> findById(Long id) {
+    Transaction transaction = null;
     try (Session session = sessionFactory.openSession()) {
+      transaction = session.beginTransaction();
       OrderMovementEntity orderMovement = orderMovementRepository.findById(session, id);
       if (orderMovement == null) {
         return new ServiceResponse<>(new OrderMovementEntity(), Response.Status.NOT_FOUND);
       }
       return new ServiceResponse<>(orderMovement, Response.Status.OK);
     } catch (Exception e) {
+      if (transaction != null) {
+        transaction.rollback();
+      }
       return new ServiceResponse<>(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
